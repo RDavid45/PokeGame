@@ -23,3 +23,14 @@ Map has 7 functions:
 fly(*m, int x, int y) - moves to board[y][x]
 initMap(*m) - sets position to 0,0 (200, 200) and generates the center board
 printScreen(*m) - prints current position and the board
+---------------------------
+Assignment 1.03 - NPC movement costs 
+---------------------------
+MovementCosts has 3 functions to call:
+initCost(MovementCosts *c, const Board *b) - sets the costs for each tile for all NPC types 
+updateCosts(MovementCosts *c, const Board *b, int row, int col) - updates the min costs for each 
+tile to reach a certain location (per NPC type)
+printCosts(MovementCosts *c) - prints the costs of each tile for each NPC type 
+Uses Dijkstras to calculate the min cost per tile. Dijkstras uses a generic heap that holds costNodes 
+to find min.
+---------------------------
