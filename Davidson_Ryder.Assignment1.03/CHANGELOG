@@ -1,0 +1,21 @@
+Assignment 1.01
+----------------------------------------------------------------------------------------------
+1/29 8:12pm implimented cordQueue.h and .c to store the cords for seeding and growing terrain.
+1/29 11:40pm implimented board.h to store the generated terrain.
+1/31 2:26pm impimented all board gen for board.c and added colloring
+1/31 5:21pm created the make file for this project.
+----------------------------------------------------------------------------------------------
+Assignment 1.02
+----------------------------------------------------------------------------------------------
+2/8 1:53pm Created Map.h and .c and implimented init map(*m) function to generate the board in the middle
+2/8 11:18pm Added the movement methods and play.c
+2/9 2:51pm Constrained movement to the available boards for safety, change the building gen to altar dificutly and made the boards not generate roads if there is no gate on that side of the board.
+20/10 10:38am fix memory leak by destroying the map when done.
+----------------------------------------------------------------------------------------------
+Assignment 1.03
+----------------------------------------------------------------------------------------------
+2/12 2:57pm created and implimented ArrayList.h and .c
+2/15 2:17pm created and implimented Heap.h and .c
+2/15 6:18pm changed the boarder characters to -, \, /, and |
+2/15 11:27pm made Movement.h and .c and impimented everything but calculate costs for them.
+2/16 2:48pm implimented dijkstras to claculate movement costs of npcs
