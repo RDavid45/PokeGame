@@ -34,3 +34,4 @@ printCosts(MovementCosts *c) - prints the costs of each tile for each NPC type
 Uses Dijkstras to calculate the min cost per tile. Dijkstras uses a generic heap that holds costNodes 
 to find min.
 ---------------------------
+
