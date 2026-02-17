@@ -128,6 +128,14 @@ int ArrayListdestroy(ArrayList *a);
  */
 int growArrayList(ArrayList *a);
 
+/**
+ * gets how many elements are in the array @p a
+ * 
+ * @param a pointer to an ArrayList
+ * @return num elements in the array
+ */
+int arraySize(ArrayList *a);
+
 
 
 #endif

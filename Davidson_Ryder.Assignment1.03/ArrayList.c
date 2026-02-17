@@ -82,11 +82,12 @@ int ArrayListremove(ArrayList *a, int i, void*removed)
 
 int growArrayList(ArrayList *a)
 {
-    a->max *= 2;
-    void *temp = realloc(a->data, a->oSize * a->max);
+    
+    void *temp = realloc(a->data, a->oSize * a->max * 2);
     if (!temp){
         return -1;
     }
+    a->max *= 2;
     a->data = temp;
     return 0;
 }
@@ -94,4 +95,9 @@ int growArrayList(ArrayList *a)
 int ArrayListdestroy(ArrayList *a){
     free(a->data);
     return 0;
+}
+
+int arraySize(ArrayList *a){
+    if (!a){ return -1;}
+    return a->aSize;
 }
