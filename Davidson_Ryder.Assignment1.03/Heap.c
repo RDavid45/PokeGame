@@ -139,4 +139,3 @@ int heapDestroy(Heap *h)
 
     return 0;
 }
-
