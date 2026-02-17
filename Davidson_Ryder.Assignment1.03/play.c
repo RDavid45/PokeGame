@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     initCharacter(&pc, '@', Trainer);
     while (1) {
         placeCharacter(&pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
-        updateCosts(&c, m.map[m.vPos][m.hPos], 10, 10);
+        updateCosts(&c, m.map[m.vPos][m.hPos], pc.vPos, pc.hPos);
         printScreen(&m, &pc);
         printCosts(&c);
         printf("what do you want to do [n,e,s,w,f,q]: ");
