@@ -31,7 +31,7 @@ int initBoard(Board *b)
 }
 int genTerrain(Board *b)
 {
-    struct seedQueue q;
+    struct SeedQueue q;
     int dx;
     int dy;
     char c;

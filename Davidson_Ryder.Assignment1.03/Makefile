@@ -1,15 +1,15 @@
 
-play: Board.o Map.o seedQueue.o play.o Movement.o Heap.o ArrayList.o
-	gcc Board.o Map.o seedQueue.o play.o Movement.o Heap.o ArrayList.o -o play
+play: Board.o Map.o SeedQueue.o play.o Movement.o Heap.o ArrayList.o
+	gcc Board.o Map.o SeedQueue.o play.o Movement.o Heap.o ArrayList.o -o play
 
 play.o: play.c Map.h Movement.h
 	gcc play.c -Wall -Werror -g -c
 
-board: Board.o genBoard.o seedQueue.o
-	gcc Board.o genBoard.o seedQueue.o -o board
+board: Board.o genBoard.o SeedQueue.o
+	gcc Board.o genBoard.o SeedQueue.o -o board
 
-seedQueue.o: seedQueue.c seedQueue.h
-	gcc seedQueue.c -Wall -Werror -g -c
+seedQueue.o: SeedQueue.c SeedQueue.h
+	gcc SeedQueue.c -Wall -Werror -g -c
 
 Board.o: Board.c Board.h seedQueue.h
 	gcc Board.c -Wall -Werror -g -c

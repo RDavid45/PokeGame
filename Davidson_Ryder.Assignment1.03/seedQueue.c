@@ -4,7 +4,7 @@
 
 
 
-int initSeedQueue(struct seedQueue *q)
+int initSeedQueue(struct SeedQueue *q)
 {
     q->back = NULL;
     q->front = NULL;
@@ -14,7 +14,7 @@ int initSeedQueue(struct seedQueue *q)
 }
 
 
-int destroySeedQueue(struct seedQueue *q)
+int destroySeedQueue(struct SeedQueue *q)
 {
     struct seed *temp;
     while ((temp = q->front)){
@@ -28,7 +28,7 @@ int destroySeedQueue(struct seedQueue *q)
 }
 
 
-int enqueueSeed(struct seedQueue *q, int x, int y, char c)
+int enqueueSeed(struct SeedQueue *q, int x, int y, char c)
 {
     struct seed *temp;
 
@@ -54,7 +54,7 @@ int enqueueSeed(struct seedQueue *q, int x, int y, char c)
 }
 
 
-int dequeueSeed(struct seedQueue *q, int *x, int *y, char *c)
+int dequeueSeed(struct SeedQueue *q, int *x, int *y, char *c)
 {
     struct seed *temp;
 
@@ -81,7 +81,7 @@ int dequeueSeed(struct seedQueue *q, int *x, int *y, char *c)
 }
 
 
-int peekSeedQueue(struct seedQueue *q, int *x, int *y, char *c)
+int peekSeedQueue(struct SeedQueue *q, int *x, int *y, char *c)
 {
     if (!q->front){
         return -1;
@@ -94,14 +94,14 @@ int peekSeedQueue(struct seedQueue *q, int *x, int *y, char *c)
 }
 
 
-int sizeQueue(struct seedQueue *q, int *size)
+int sizeQueue(struct SeedQueue *q, int *size)
 {
     *size = q->size;
 
     return 0;
 }
 
-int isEmptyQueue(struct seedQueue *q)
+int isEmptyQueue(struct SeedQueue *q)
 {
     if (q->back == NULL && q->front == NULL){
         return 1;

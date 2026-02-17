@@ -8,7 +8,7 @@ struct seed
     char chr;
     struct seed *next;
 };
-struct seedQueue{
+struct SeedQueue{
     struct seed *front;
     struct seed *back;
     int size;
@@ -20,7 +20,7 @@ struct seedQueue{
  * @param q pointer to the seedQueue to initialize
  * @return 0 on success; -1 on failure
  */
-int initSeedQueue(struct seedQueue *q);
+int initSeedQueue(struct SeedQueue *q);
 
 /**
  * Destroys the seedQueue by freeing all nodes and resetting fields.
@@ -29,7 +29,7 @@ int initSeedQueue(struct seedQueue *q);
  * @param q pointer to the seedQueue to destroy
  * @return 0 on success; -1 on failure
  */
-int destroySeedQueue(struct seedQueue *q);
+int destroySeedQueue(struct SeedQueue *q);
 
 /**
  * Enqueues a new seed with coordinates ( @p x, @p y ) and character @p c
@@ -41,7 +41,7 @@ int destroySeedQueue(struct seedQueue *q);
  * @param c character to store
  * @return 0 on success; -1 on failure (e.g., allocation fails)
  */
-int enqueueSeed(struct seedQueue *q, int x, int y, char c);
+int enqueueSeed(struct SeedQueue *q, int x, int y, char c);
 
 /**
  * Dequeues the seed at the front of the queue and copies its values into
@@ -56,7 +56,7 @@ int enqueueSeed(struct seedQueue *q, int x, int y, char c);
  * @note This function does not validate that @p x, @p y, and @p c are non-NULL;
  *       passing NULL may cause damage. Make sure all pointers are valid.
  */
-int dequeueSeed(struct seedQueue *q, int *x, int *y, char *c);
+int dequeueSeed(struct SeedQueue *q, int *x, int *y, char *c);
 
 /**
  * Copies the values from the seed at the front of the queue into
@@ -71,7 +71,7 @@ int dequeueSeed(struct seedQueue *q, int *x, int *y, char *c);
  * @note This function does not validate that @p x, @p y, and @p c are non-NULL;
  *       passing NULL may cause damage. Make sure all pointers are valid.
  */
-int peekSeedQueue(struct seedQueue *q, int *x, int *y, char *c);
+int peekSeedQueue(struct SeedQueue *q, int *x, int *y, char *c);
 
 /**
  * Retrieves the current number of elements in the queue.
@@ -83,7 +83,7 @@ int peekSeedQueue(struct seedQueue *q, int *x, int *y, char *c);
  * @note This function does not validate that @p size is non-NULL; passing NULL
  *       may cause damage. Make sure @p size is valid.
  */
-int sizeQueue(struct seedQueue *q, int *size);
+int sizeQueue(struct SeedQueue *q, int *size);
 
 /**
  * Reports whether the queue is empty.
@@ -91,7 +91,7 @@ int sizeQueue(struct seedQueue *q, int *size);
  * @param q pointer to the seedQueue
  * @return 1 if empty; 0 if not empty; -1 on failure
  */
-int isEmptyQueue(struct seedQueue *q);
+int isEmptyQueue(struct SeedQueue *q);
 
 
 
