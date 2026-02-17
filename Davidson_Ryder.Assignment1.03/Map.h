@@ -1,4 +1,5 @@
 #include "Board.h"
+#include "Character.h"
 
 #ifndef MAP_H
 #define MAP_H
@@ -11,7 +12,7 @@ typedef struct Map
 } Map;
 
 int initMap(Map *m);
-int printScreen(Map *m);
+int printScreen(Map *m, Character *c);
 int moveNorth(Map *m);
 int moveSouth(Map *m);
 int moveEast(Map *m);

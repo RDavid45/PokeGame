@@ -8,6 +8,8 @@ typedef struct Board
     char board[21][80];
     int height;
     int width;
+    int centerX;
+    int centerY;
     int left;
     int top;
     int right;

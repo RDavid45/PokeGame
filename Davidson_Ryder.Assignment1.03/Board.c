@@ -132,19 +132,19 @@ int buildroads(Board *b, int hPos, int vPos)
     y1 = b->right;
     y2 = b->left;
 
-    int x = rand() % (65 - 21) + 21;
-    int y = rand() % (16 - 5) + 5;
-    b->board[y][x] = '#';
+    b->centerX = rand() % (65 - 21) + 21;
+    b->centerY = rand() % (16 - 5) + 5;
+    b->board[b->centerY][b->centerX] = '#';
     int i, j;
     if (hPos < 400) {
         b->board[y1][79] = '#';
         i = 78; j = y1;
         b->board[j][i] = '#';
-        while(i != x || j != y){
-            if (abs(x-i) > abs(y-j)){
-                i += (x>i) ? 1 : -1;
+        while(i != b->centerX || j != b->centerY){
+            if (abs(b->centerX - i) > abs(b->centerY - j)){
+                i += (b->centerX > i) ? 1 : -1;
             } else {
-                j += (y>j) ? 1 : -1;
+                j += (b->centerY > j) ? 1 : -1;
             }
             b->board[j][i] = '#';
         }
@@ -153,11 +153,11 @@ int buildroads(Board *b, int hPos, int vPos)
         b->board[y2][0] = '#';
         i = 1; j = y2;
         b->board[j][i] = '#';
-        while(i != x || j != y){
-            if (abs(x-i) > abs(y-j)){
-                i += (x>i) ? 1 : -1;
+        while(i != b->centerX || j != b->centerY){
+            if (abs(b->centerX - i) > abs(b->centerY - j)){
+                i += (b->centerX > i) ? 1 : -1;
             } else {
-                j += (y>j) ? 1 : -1;
+                j += (b->centerY > j) ? 1 : -1;
             }
             b->board[j][i] = '#';
         }
@@ -166,11 +166,11 @@ int buildroads(Board *b, int hPos, int vPos)
         b->board[20][x1] = '#';
         i = x1; j = 19;
         b->board[j][i] = '#';
-        while(i != x || j != y){
-            if (abs(x-i) > abs(y-j)){
-                i += (x>i) ? 1 : -1;
+        while(i != b->centerX || j != b->centerY){
+            if (abs(b->centerX - i) > abs(b->centerY - j)){
+                i += (b->centerX > i) ? 1 : -1;
             } else {
-                j += (y>j) ? 1 : -1;
+                j += (b->centerY > j) ? 1 : -1;
             }
             b->board[j][i] = '#';
         }
@@ -179,11 +179,11 @@ int buildroads(Board *b, int hPos, int vPos)
         b->board[0][x2] = '#';
         i = x2; j = 1;
         b->board[j][i] = '#';
-        while(i != x || j != y){
-            if (abs(x-i) > abs(y-j)){
-                i += (x>i) ? 1 : -1;
+        while(i != b->centerX || j != b->centerY){
+            if (abs(b->centerX - i) > abs(b->centerY - j)){
+                i += (b->centerX > i) ? 1 : -1;
             } else {
-                j += (y>j) ? 1 : -1;
+                j += (b->centerY > j) ? 1 : -1;
             }
             b->board[j][i] = '#';
         }

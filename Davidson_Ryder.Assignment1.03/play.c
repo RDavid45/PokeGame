@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "Movement.h"
+#include "Character.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,10 +13,12 @@ int main(int argc, char *argv[])
     char dir;
     MovementCosts c;
     InitCosts(&c, m.map[m.vPos][m.hPos]);
+    Character pc;
+    initCharacter(&pc, '@', Trainer);
     while (1) {
-        // read input for dir
+        placeCharacter(&pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
         updateCosts(&c, m.map[m.vPos][m.hPos], 10, 10);
-        printScreen(&m);
+        printScreen(&m, &pc);
         printCosts(&c);
         printf("what do you want to do [n,e,s,w,f,q]: ");
         scanf(" %c", &dir);

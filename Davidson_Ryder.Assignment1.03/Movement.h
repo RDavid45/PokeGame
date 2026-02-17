@@ -5,7 +5,10 @@
 
 typedef enum type {
     Hiker,
-    Rival
+    Rival,
+    Trainer,
+    Swimmer,
+    Other
 }type;
 
 typedef struct cost{
