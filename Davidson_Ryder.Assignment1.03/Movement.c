@@ -183,9 +183,9 @@ void printCosts(MovementCosts *c)
     for(int i =0; i < 21; i++){
         for (int j = 0; j<80; j++){
             if (c->hiker[i][j].cost < 1000000){
-                printf("%3d", c->hiker[i][j].cost);
+                printf("%3d", c->hiker[i][j].cost % 100);
             } else {
-                printf(" I ");
+                printf(" --");
             }
         }
         printf("\n");
@@ -193,9 +193,9 @@ void printCosts(MovementCosts *c)
     for(int i =0; i < 21; i++){
         for (int j = 0; j<80; j++){
             if (c->rival[i][j].cost < 1000000){
-                printf("%3d", c->rival[i][j].cost);
+                printf("%3d", c->rival[i][j].cost % 100);
             } else {
-                printf(" I ");
+                printf(" --");
             }
         }
         printf("\n");
