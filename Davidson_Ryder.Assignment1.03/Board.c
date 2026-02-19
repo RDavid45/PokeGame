@@ -333,13 +333,13 @@ int genBoard(Map *m)
     buildroads(b, m->hPos, m->vPos);
     placeBuildings(m);
     if (m->vPos == 400){
-        b->board[20][b->bottom] = '%';
+        b->board[20][b->bottom] = '-';
     }if (m->vPos == 0){
-        b->board[0][b->bottom] = '%';
+        b->board[0][b->top] = '-';
     }if (m->hPos == 400){
-        b->board[b->right][79] = '%';
+        b->board[b->right][79] = '|';
     }if (m->hPos == 0){
-        b->board[b->left][0] = '%';
+        b->board[b->left][0] = '|';
     }
 
     return 0;
