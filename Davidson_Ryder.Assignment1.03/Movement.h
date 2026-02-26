@@ -21,12 +21,13 @@ typedef struct cost{
 typedef struct costs{
     cost hiker[21][80];
     cost rival[21][80];
+    cost trainer[21][80];
+    cost swimmer[21][80];
+    cost other[21][80];
 } MovementCosts;
 
 int InitCosts(MovementCosts *c, const Board *b);
 void updateCosts(MovementCosts *c, const Board *b, int row, int col);
-void hikerCosts(MovementCosts *c, int row, int col);
-void rivalCosts(MovementCosts *c, int row, int col);
 void printCosts(MovementCosts *c);
 
 
