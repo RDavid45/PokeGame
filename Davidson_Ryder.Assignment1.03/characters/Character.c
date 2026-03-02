@@ -9,6 +9,7 @@ int initCharacter(Character *c, char icon, characterType npct, type t){
     c->icon = icon;
     c->t = t;
     c->npct = npct;
+    return 0;
 }
 
 
