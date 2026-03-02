@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 #include "Movement.h"
 #include "Character.h"
+#include "CharacterMap.h"
+#include "MoveController.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,14 +15,30 @@ int main(int argc, char *argv[])
     initMap(&m);
     char dir;
     MovementCosts c;
+    CharacterMap cmap;
+    MoveQueue mq;
+    initCharacterMap(&cmap);
     InitCosts(&c, m.map[m.vPos][m.hPos]);
+    initMoveQueue(&mq, m.map[m.vPos][m.hPos], &c, &cmap);
     Character pc;
-    initCharacter(&pc, '@', Trainer);
+    initCharacter(&pc, '@', Trainer, Trainer);
+    placeCharacter(&cmap, &pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
+    Move move = {.c = &pc, .dx = 0, .dy = 0, .when = 100000};
+    scheduleMove(&mq, &move);
+    if (argc != 0){
+        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &m, argv[0]);
+    } else {
+        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &m, 10);
+    }
     while (1) {
-        placeCharacter(&pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
+        heapPop(mq.h, &move);
+        handleMove(&mq, &m);
+        showGameState(&m, &cmap);
+        usleep(250000);
+    }
+    while (1) {
+        
         updateCosts(&c, m.map[m.vPos][m.hPos], pc.vPos, pc.hPos);
-        printScreen(&m, &pc);
-        printCosts(&c);
         printf("what do you want to do [n,e,s,w,f,q]: ");
         scanf(" %c", &dir);
         
@@ -65,4 +84,35 @@ int main(int argc, char *argv[])
             break;
         }
     }
+
 }
+
+void showGameState(Map *m, CharacterMap *cmap){
+    Board *b = m->map[m->vPos][m->hPos];
+    printf("Current pos (%d, %d)\n", m->hPos - 200, m->vPos -200);
+    for (int i = 0;i < b->height;i++){
+        for (int j = 0; j<b->width; j++){
+            if (cmap->cmap[i][j]){
+                printf("\033[91m%c\033[0m", cmap->cmap[i][j]->icon);
+            } else if (b->board[i][j] == '%'){
+                printf("\033[90m%c\033[0m", b->board[i][j]);
+            } else if (b->board[i][j] == '~'){
+                printf("\033[34m%c\033[0m", b->board[i][j]);
+            } else if (b->board[i][j] == ':'){
+                printf("\033[32m%c\033[0m", b->board[i][j]);
+            } else if (b->board[i][j] == '.'){
+                printf("\033[92m%c\033[0m", b->board[i][j]);
+            } else if (b->board[i][j] == '^'){
+                printf("\033[38;2;34;139;34m%c\033[0m", b->board[i][j]);
+            } else if (b->board[i][j] == 'm'){
+                printf("\033[36m%c\033[0m", b->board[i][j]);
+            } else if (b->board[i][j] == 'c'){
+                printf("\033[38;2;255;200;100m%c\033[0m", b->board[i][j]);
+            } else {
+                printf("%c", b->board[i][j]);
+            }
+        }
+        printf("\n");
+    }
+}
+

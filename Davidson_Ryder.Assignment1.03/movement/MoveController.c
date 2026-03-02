@@ -1,0 +1,177 @@
+#include "MoveController.h"
+#include <limits.h>
+#include <stdlib.h>
+
+#define INF 100000
+
+int moveCompare(const void *v1, const void *v2){
+    const Move *m1 = (const Move*) v1;
+    const Move *m2 = (const Move*) v2;
+
+    int diff = m1->when - m2->when;
+    if (diff == 0){
+        if (m2->c->t == Trainer){
+            return -1;
+        }
+        return 1;
+    }
+    return diff;
+}
+
+int initMoveQueue(MoveQueue *moves, Board *b, MovementCosts *mc, CharacterMap *cmap){
+    moves->b = b;
+    initHeap(moves->h, moveCompare, sizeof(Move));
+    moves->costs = mc;
+    moves->cmap = cmap;
+}
+
+int scheduleMove(MoveQueue *moves, Move *m){
+    return heapAdd(moves->h, m);
+}
+
+int scheduleNextMove(MoveQueue *moves, Move *m){
+    Character *ch = m->c;
+    int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
+    int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
+    switch (ch->npct){
+        case Hiker:
+            int minChange;
+            int min = INF;
+            for (int i= 0; i< 8; i++){
+                if (moves->costs->hiker[ch->vPos + dr[i]][ch->hPos + dc[i]].cost < min){
+                    min = moves->costs->hiker[ch->vPos + dr[i]][ch->hPos + dc[i]].cost;
+                    minChange = i;
+                }
+            }
+            m->dx = dc[minChange];
+            m->dy = dr[minChange];
+            m->when += moves->costs->hiker[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
+            break;
+        case Rival:
+        int minChange;
+            int min = INF;
+            for (int i= 0; i< 8; i++){
+                if (moves->costs->rival[ch->vPos + dr[i]][ch->hPos + dc[i]].cost < min){
+                    min = moves->costs->rival[ch->vPos + dr[i]][ch->hPos + dc[i]].cost;
+                    minChange = i;
+                }
+            }
+            m->dx = dc[minChange];
+            m->dy = dr[minChange];
+            m->when += moves->costs->rival[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
+            break;
+        case Swimmer:
+            int change = rand() % 8;
+            while (moves->b->board[ch->vPos + dr[change]][ch->hPos + dc[change]] != '~'){
+                change = rand() % 8;
+            }
+            m->dx = dc[change];
+            m->dy = dr[change];
+            m->when += 7;
+            break;
+        case Sentinal:
+            m->dx = 0;
+            m->dy = 0;
+            m->when += INF;
+            break;
+        case Wanderer:
+            char terrain = moves->b->board[ch->vPos][ch->hPos];
+            if (moves->b->board[ch->vPos + m->dy][ch->hPos + m->dx] == terrain){
+                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                } else {
+                    int change = rand() % 8;
+                    while (moves->b->board[ch->vPos + dr[change]][ch->hPos + dc[change]] != terrain){
+                        change = rand() % 8;
+                    }
+                    m->dx = dc[change];
+                    m->dy = dr[change];
+                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                }
+            break;
+        case Explorer:
+            if (moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight != INF){
+                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                } else {
+                    int change = rand() % 8;
+                    while (moves->costs->other[ch->vPos + dr[change]][ch->hPos + dc[change]].weight 
+                        == INF){
+                        change = rand() % 8;
+                    }
+                    m->dx = dc[change];
+                    m->dy = dr[change];
+                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                }
+            break;
+        case Pacer:
+            if (moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight != INF){
+                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                } else {
+                    m->dx *= -1;
+                    m->dy *= -1;
+                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                }
+            break;
+    }
+    return scheduleMove(moves, m);
+}
+
+static inline int inBounds(int r, int c) {
+    return r > 0 && r < 20 && c > 0 && c < 79;
+}
+
+static inline int destWeightFor(const MoveQueue *mq, const Character *ch, int row, int col) {
+    switch (ch->t) {
+        case Hiker:  return mq->costs->hiker[row][col].weight;
+        case Rival:  return mq->costs->rival[row][col].weight;
+        case Trainer:return mq->costs->trainer[row][col].weight;
+        default:     return mq->costs->other[row][col].weight;
+    }
+}
+
+int handleMove(MoveQueue *moves, Move *m) {
+    Character *ch = m->c;
+
+
+    int nRow = ch->vPos + m->dy;
+    int nCol = ch->hPos + m->dx;
+
+   
+    if (!inBounds(nRow, nCol)) {
+        int stay_w = destWeightFor(moves, ch, ch->vPos, ch->hPos);
+        return -1;
+    }
+
+    
+    if (moves->cmap->cmap[nRow][nCol] != NULL) {
+        int stay_w = destWeightFor(moves, ch, ch->vPos, ch->hPos);
+        return -1;
+    }
+
+    int w = destWeightFor(moves, ch, nRow, nCol);
+    if (w >= INF) {
+        int stay_w = dest_weight_for(moves, ch, ch->vPos, ch->hPos);
+        return -1;
+    }
+
+    if (moves->cmap->cmap[ch->vPos][ch->hPos] == ch && moves->cmap->cmap[nRow][nCol] == NULL) {
+        moves->cmap->cmap[ch->vPos][ch->hPos] = NULL;
+        moves->cmap->cmap[nRow][nCol] = ch;
+    }
+    
+
+    ch->vPos = nRow;
+    ch->hPos = nCol;
+
+    if (ch->t != Trainer){
+        scheduleNextMove(moves, m);
+    }
+
+
+    return 0;
+}
+
+
+int updateBoard(MoveQueue *moves, Board *b){
+    moves->b = b;
+}
+

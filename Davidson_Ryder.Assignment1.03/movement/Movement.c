@@ -17,7 +17,7 @@ int costsCompare(const void *c1, const void *c2);
 int checkValidPos(int row, int col);
 
 
-int InitCosts(MovementCosts *c, const Board *b)
+int initCosts(MovementCosts *c, const Board *b)
 {
     resetCosts(c, b);
     return 0;

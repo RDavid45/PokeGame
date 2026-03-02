@@ -26,7 +26,7 @@ typedef struct costs{
     cost other[21][80];
 } MovementCosts;
 
-int InitCosts(MovementCosts *c, const Board *b);
+int initCosts(MovementCosts *c, const Board *b);
 void updateCosts(MovementCosts *c, const Board *b, int row, int col);
 void printCosts(MovementCosts *c);
 
