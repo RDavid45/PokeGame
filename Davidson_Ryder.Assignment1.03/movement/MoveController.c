@@ -23,6 +23,7 @@ int initMoveController(MoveController *moves, Board *b, MovementCosts *mc, Chara
     initHeap(moves->h, moveCompare, sizeof(Move));
     moves->costs = mc;
     moves->cmap = cmap;
+    return 0;
 }
 
 int scheduleMove(MoveController *moves, Move *m){
@@ -33,10 +34,10 @@ int scheduleNextMove(MoveController *moves, Move *m){
     Character *ch = m->c;
     int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
     int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
+    int minChange;
+    int min = INF;
     switch (ch->npct){
         case HikerLogic:
-            int minChange;
-            int min = INF;
             for (int i= 0; i< 8; i++){
                 if (moves->costs->hiker[ch->vPos + dr[i]][ch->hPos + dc[i]].cost < min){
                     min = moves->costs->hiker[ch->vPos + dr[i]][ch->hPos + dc[i]].cost;
@@ -48,8 +49,6 @@ int scheduleNextMove(MoveController *moves, Move *m){
             m->when += moves->costs->hiker[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
             break;
         case RivalLogic:
-        int minChange;
-            int min = INF;
             for (int i= 0; i< 8; i++){
                 if (moves->costs->rival[ch->vPos + dr[i]][ch->hPos + dc[i]].cost < min){
                     min = moves->costs->rival[ch->vPos + dr[i]][ch->hPos + dc[i]].cost;
@@ -61,12 +60,12 @@ int scheduleNextMove(MoveController *moves, Move *m){
             m->when += moves->costs->rival[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
             break;
         case SwimmerLogic:
-            int change = rand() % 8;
-            while (moves->b->board[ch->vPos + dr[change]][ch->hPos + dc[change]] != '~'){
-                change = rand() % 8;
+            minChange = rand() % 8;
+            while (moves->b->board[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]] != '~'){
+                minChange = rand() % 8;
             }
-            m->dx = dc[change];
-            m->dy = dr[change];
+            m->dx = dc[minChange];
+            m->dy = dr[minChange];
             m->when += 7;
             break;
         case SentinalLogic:
@@ -79,12 +78,12 @@ int scheduleNextMove(MoveController *moves, Move *m){
             if (moves->b->board[ch->vPos + m->dy][ch->hPos + m->dx] == terrain){
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 } else {
-                    int change = rand() % 8;
-                    while (moves->b->board[ch->vPos + dr[change]][ch->hPos + dc[change]] != terrain){
-                        change = rand() % 8;
+                    minChange = rand() % 8;
+                    while (moves->b->board[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]] != terrain){
+                        minChange = rand() % 8;
                     }
-                    m->dx = dc[change];
-                    m->dy = dr[change];
+                    m->dx = dc[minChange];
+                    m->dy = dr[minChange];
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 }
             break;
@@ -92,13 +91,13 @@ int scheduleNextMove(MoveController *moves, Move *m){
             if (moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight != INF){
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 } else {
-                    int change = rand() % 8;
-                    while (moves->costs->other[ch->vPos + dr[change]][ch->hPos + dc[change]].weight 
+                    minChange = rand() % 8;
+                    while (moves->costs->other[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight 
                         == INF){
-                        change = rand() % 8;
+                        minChange = rand() % 8;
                     }
-                    m->dx = dc[change];
-                    m->dy = dr[change];
+                    m->dx = dc[minChange];
+                    m->dy = dr[minChange];
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 }
             break;
@@ -111,6 +110,8 @@ int scheduleNextMove(MoveController *moves, Move *m){
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 }
             break;
+        default:
+            return -1;
     }
     return scheduleMove(moves, m);
 }
@@ -137,19 +138,16 @@ int handleMove(MoveController *moves, Move *m) {
 
    
     if (!inBounds(nRow, nCol)) {
-        int stay_w = destWeightFor(moves, ch, ch->vPos, ch->hPos);
         return -1;
     }
 
     
     if (moves->cmap->cmap[nRow][nCol] != NULL) {
-        int stay_w = destWeightFor(moves, ch, ch->vPos, ch->hPos);
         return -1;
     }
 
     int w = destWeightFor(moves, ch, nRow, nCol);
     if (w >= INF) {
-        int stay_w = dest_weight_for(moves, ch, ch->vPos, ch->hPos);
         return -1;
     }
 
@@ -172,6 +170,10 @@ int handleMove(MoveController *moves, Move *m) {
 
 
 int updateBoard(MoveController *moves, Board *b){
+    if (!b){
+        return -1;
+    }
     moves->b = b;
+    return 0;
 }
 
