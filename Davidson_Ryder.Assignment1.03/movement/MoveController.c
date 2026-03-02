@@ -31,6 +31,10 @@ int scheduleMove(MoveController *moves, Move *m){
     return heapAdd(moves->h, m);
 }
 
+static inline int inBounds(int r, int c) {
+    return r > 0 && r < 20 && c > 0 && c < 79;
+}
+
 int scheduleNextMove(MoveController *moves, Move *m) {
     Character *ch = m->c;
     static const int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
@@ -252,10 +256,6 @@ int scheduleNextMove(MoveController *moves, Move *m) {
     }
 
     return scheduleMove(moves, m);
-}
-
-static inline int inBounds(int r, int c) {
-    return r > 0 && r < 20 && c > 0 && c < 79;
 }
 
 static inline int destWeightFor(const MoveController *mq, const Character *ch, int row, int col) {
