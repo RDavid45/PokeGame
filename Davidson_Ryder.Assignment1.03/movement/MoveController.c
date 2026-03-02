@@ -139,16 +139,25 @@ int handleMove(MoveController *moves, Move *m) {
 
    
     if (!inBounds(nRow, nCol)) {
+        if (ch->npct != TrainerLogic){
+        scheduleNextMove(moves, m);
+    }
         return -1;
     }
 
     
     if (moves->cmap->cmap[nRow][nCol] != NULL) {
+        if (ch->npct != TrainerLogic){
+        scheduleNextMove(moves, m);
+    }
         return -1;
     }
 
     int w = destWeightFor(moves, ch, nRow, nCol);
     if (w >= INF) {
+        if (ch->npct != TrainerLogic){
+        scheduleNextMove(moves, m);
+    }
         return -1;
     }
 
