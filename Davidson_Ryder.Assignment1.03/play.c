@@ -22,8 +22,9 @@ int main(int argc, char *argv[])
     initCharacterMap(&cmap);
     initCosts(&c, m.map[m.vPos][m.hPos]);
     initMoveController(&mq, m.map[m.vPos][m.hPos], &c, &cmap);
+    assert(mq.h != NULL);
     Character pc;
-    initCharacter(&pc, '@', Trainer, Trainer);
+    initCharacter(&pc, '@', TrainerLogic, Trainer);
     placeCharacter(&cmap, &pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
     Move move = {.c = &pc, .dx = 0, .dy = 0, .when = 100000};
     scheduleMove(&mq, &move);
