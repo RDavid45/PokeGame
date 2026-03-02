@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
         spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, 10);
     }
     while (1) {
-        if (HeapSize(mq.h) == 0) break;
+        if (heapEmpty(mq.h)) break;
         heapPop(mq.h, &move);
         handleMove(&mq, &move);
         showGameState(&m, &cmap);
