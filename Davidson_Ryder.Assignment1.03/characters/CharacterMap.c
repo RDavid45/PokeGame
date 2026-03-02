@@ -1,6 +1,7 @@
 #include "CharacterMap.h"
 #include <stdlib.h>
 #include "MoveController.h"
+#include "Movement.h"
 
 #ifndef INF
 #define INF 100000
@@ -13,12 +14,14 @@ int initCharacterMap(CharacterMap *c){
             c->cmap[i][j] = NULL;
         }
     }
+    return 0;
 }
 
 int placeCharacter(CharacterMap *map, Character *c, int hPos, int vPos){
     c->hPos = hPos;
     c->vPos = vPos;
     map->cmap[vPos][hPos] = c;
+    return 0;
 }
 
 static inline char iconFor(characterType t) {
@@ -38,21 +41,21 @@ static characterType randomBehavior(void) {
     return pool[rand() % 6];
 }
 
-static type costCategoryFor(characterType npc) {
-    switch (npc) {
-        case Hiker: return Hiker;
-        case Rival: return Rival;
+static type costCategoryFor(characterType t) {
+    switch (t) {
+        case HikerLogic: return Hiker;
+        case RivalLogic: return Rival;
         default:    return Other; 
     }
 }
 
 static int inBounds(int r, int c) { return (r > 0 && r < 20 && c > 0 && c < 79);}
 
-static int isOccupied(CharacterMap *cmap,int r, int c) {return cmap->cmap[r][c] != NULL;}
+static int isOccupied(const CharacterMap *cmap,int r, int c) {return cmap->cmap[r][c] != NULL;}
 
-static int canSpawn(const CharacterMap *cm, Board *b, const MovementCosts *mc, characterType npc, int r, int c) {
+static int canSpawn(const CharacterMap *cm, Board *b, const MovementCosts *mc, type npc, int r, int c) {
     if (isOccupied(cm, r, c)) return 0;
-    if (weight_at(mc, npc, r, c) >= INF) return 0;
+    if (findCost(b->board[r][c], npc) >= INF) return 0;
     return 1;
 }
 
@@ -80,14 +83,15 @@ SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, Movement
     int max_attempts = count * 50;
     while (sr.placed < count && sr.failed_attempts < max_attempts) {
         characterType npc = randomBehavior();
+        type cc = costCategoryFor(npc);
         int r = (rand() % 19) + 1;  
         int c = (rand() % 78) + 1;  
-        if (!canSpawn(cmap, b, mc, npc, r, c)) { sr.failed_attempts++; continue; }
+        if (!canSpawn(cmap, b, mc, cc, r, c)) { sr.failed_attempts++; continue; }
 
         Character *ch = (Character*)malloc(sizeof(*ch));
         if (!ch) break;
         char icon = iconFor(npc);
-        type cc = costCategoryFor(npc);
+       
         initCharacter(ch, icon, npc, cc);
         placeCharacter(cmap, ch, c, r);  // (hPos, vPos)
 
@@ -95,7 +99,7 @@ SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, Movement
         m.c = ch;
         m.when = 0;
         pickInitialDir(b, mc, npc, r, c, &m.dx, &m.dy);
-        scheduleNextMove(mq, &m);
+        scheduleMove(mq, &m);
 
         sr.placed++;
     }
