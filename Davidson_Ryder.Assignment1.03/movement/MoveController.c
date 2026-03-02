@@ -18,18 +18,18 @@ int moveCompare(const void *v1, const void *v2){
     return diff;
 }
 
-int initMoveQueue(MoveQueue *moves, Board *b, MovementCosts *mc, CharacterMap *cmap){
+int initMoveController(MoveController *moves, Board *b, MovementCosts *mc, CharacterMap *cmap){
     moves->b = b;
     initHeap(moves->h, moveCompare, sizeof(Move));
     moves->costs = mc;
     moves->cmap = cmap;
 }
 
-int scheduleMove(MoveQueue *moves, Move *m){
+int scheduleMove(MoveController *moves, Move *m){
     return heapAdd(moves->h, m);
 }
 
-int scheduleNextMove(MoveQueue *moves, Move *m){
+int scheduleNextMove(MoveController *moves, Move *m){
     Character *ch = m->c;
     int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
     int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
@@ -119,7 +119,7 @@ static inline int inBounds(int r, int c) {
     return r > 0 && r < 20 && c > 0 && c < 79;
 }
 
-static inline int destWeightFor(const MoveQueue *mq, const Character *ch, int row, int col) {
+static inline int destWeightFor(const MoveController *mq, const Character *ch, int row, int col) {
     switch (ch->t) {
         case Hiker:  return mq->costs->hiker[row][col].weight;
         case Rival:  return mq->costs->rival[row][col].weight;
@@ -128,7 +128,7 @@ static inline int destWeightFor(const MoveQueue *mq, const Character *ch, int ro
     }
 }
 
-int handleMove(MoveQueue *moves, Move *m) {
+int handleMove(MoveController *moves, Move *m) {
     Character *ch = m->c;
 
 
@@ -171,7 +171,7 @@ int handleMove(MoveQueue *moves, Move *m) {
 }
 
 
-int updateBoard(MoveQueue *moves, Board *b){
+int updateBoard(MoveController *moves, Board *b){
     moves->b = b;
 }
 

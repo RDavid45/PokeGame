@@ -8,6 +8,8 @@
 #include "CharacterMap.h"
 #include "MoveController.h"
 
+void showGameState(Map *m, CharacterMap *cmap);
+
 int main(int argc, char *argv[])
 {
     srand(time(NULL));
@@ -16,23 +18,23 @@ int main(int argc, char *argv[])
     char dir;
     MovementCosts c;
     CharacterMap cmap;
-    MoveQueue mq;
+    MoveController mq;
     initCharacterMap(&cmap);
-    InitCosts(&c, m.map[m.vPos][m.hPos]);
-    initMoveQueue(&mq, m.map[m.vPos][m.hPos], &c, &cmap);
+    initCosts(&c, m.map[m.vPos][m.hPos]);
+    initMoveController(&mq, m.map[m.vPos][m.hPos], &c, &cmap);
     Character pc;
     initCharacter(&pc, '@', Trainer, Trainer);
     placeCharacter(&cmap, &pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
     Move move = {.c = &pc, .dx = 0, .dy = 0, .when = 100000};
     scheduleMove(&mq, &move);
     if (argc != 0){
-        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &m, argv[0]);
+        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, (int) argv[0]);
     } else {
-        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &m, 10);
+        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, 10);
     }
     while (1) {
         heapPop(mq.h, &move);
-        handleMove(&mq, &m);
+        handleMove(&mq, &move);
         showGameState(&m, &cmap);
         usleep(250000);
     }

@@ -15,12 +15,12 @@ typedef struct CharacterMap{
     Character *cmap[21][80];
 } CharacterMap;
 
-typedef struct MoveQueue MoveQueue;
+typedef struct MoveController MoveController;
 
 int initCharacterMap(CharacterMap *c);
 
 int placeCharacter(CharacterMap *cmap, Character *c, int hPos, int vPos);
 
-SpawnResult spawnNPCs(CharacterMap *cmap, MoveQueue *mq, Board *b, MovementCosts *mc, int count);
+SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, MovementCosts *mc, int count);
 
 #endif

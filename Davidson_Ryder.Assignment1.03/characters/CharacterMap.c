@@ -74,7 +74,7 @@ static void pickInitialDir(Board *b, const MovementCosts *mc, characterType npc,
     }
 }
 
-SpawnResult spawnNPCs(CharacterMap *cmap, MoveQueue *mq, Board *b, MovementCosts *mc, int count){
+SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, MovementCosts *mc, int count){
     SpawnResult sr = { .requested = count, .placed = 0, .failed_attempts = 0 };
 
     int max_attempts = count * 50;

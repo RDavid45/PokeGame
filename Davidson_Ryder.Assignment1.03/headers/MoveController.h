@@ -4,8 +4,8 @@
 #include "Board.h"
 #include "Heap.h"
 
-#ifndef MOVEQUEUE_H
-#define MOVEQUEUE_H
+#ifndef MoveController_H
+#define MoveController_H
 
 typedef struct moves{
     Character *c;
@@ -19,17 +19,17 @@ typedef struct MoveController {
     MovementCosts *costs;
     Heap *h;
     CharacterMap *cmap;
-} MoveQueue;
+} MoveController;
 
 int moveCompare(const void *v1, const void *v2);
 
-int scheduleMove(MoveQueue *moves, Move *m);
+int scheduleMove(MoveController *moves, Move *m);
 
-int initMoveQueue(MoveQueue *moves, Board *b, MovementCosts *mc, CharacterMap *cmap);
+int initMoveController(MoveController *moves, Board *b, MovementCosts *mc, CharacterMap *cmap);
 
-int handleMove(MoveQueue *mq, Move *m);
+int handleMove(MoveController *mq, Move *m);
 
-int updateBoard(MoveQueue *moves, Board *b);
+int updateBoard(MoveController *moves, Board *b);
 
 
 
