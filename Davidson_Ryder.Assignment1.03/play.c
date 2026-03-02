@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
     } else {
         spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, 10);
     }
+    updateCosts(&c, m.map[m.vPos][m.hPos], pc.vPos, pc.hPos);
     while (1) {
         if (heapEmpty(mq.h)) break;
         heapPop(mq.h, &move);
@@ -43,7 +44,6 @@ int main(int argc, char *argv[])
         system("clear");
     }
     while (1) {
-        
         updateCosts(&c, m.map[m.vPos][m.hPos], pc.vPos, pc.hPos);
         printf("what do you want to do [n,e,s,w,f,q]: ");
         scanf(" %c", &dir);
