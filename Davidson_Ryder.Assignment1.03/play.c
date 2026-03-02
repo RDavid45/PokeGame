@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
     placeCharacter(&cmap, &pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
     Move move = {.c = &pc, .dx = 0, .dy = 0, .when = 100000};
     scheduleMove(&mq, &move);
-    if (argc != 0){
-        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, (int) argv[0]);
+    if (argc > 1){
+        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, atoi(argv[1]));
     } else {
         spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, 10);
     }
