@@ -161,7 +161,7 @@ int handleMove(MoveController *moves, Move *m) {
     ch->vPos = nRow;
     ch->hPos = nCol;
 
-    if (ch->t != Trainer){
+    if (ch->npct != TrainerLogic){
         scheduleNextMove(moves, m);
     }
 
