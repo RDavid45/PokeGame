@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
         handleMove(&mq, &move);
         showGameState(&m, &cmap);
         usleep(250000);
+        system("clear");
     }
     while (1) {
         
