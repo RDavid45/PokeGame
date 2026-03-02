@@ -37,24 +37,29 @@ int scheduleNextMove(MoveController *moves, Move *m){
     int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
     int minChange;
     int min = INF;
+    int j;
     switch (ch->npct){
         case HikerLogic:
+            j = rand() % 8;
             for (int i= 0; i< 8; i++){
-                if (moves->costs->hiker[ch->vPos + dr[i]][ch->hPos + dc[i]].cost < min){
-                    min = moves->costs->hiker[ch->vPos + dr[i]][ch->hPos + dc[i]].cost;
-                    minChange = i;
+                if (moves->costs->hiker[ch->vPos + dr[j]][ch->hPos + dc[j]].cost < min){
+                    min = moves->costs->hiker[ch->vPos + dr[j]][ch->hPos + dc[j]].cost;
+                    minChange = j;
                 }
+                j = (j + 1) % 8;
             }
             m->dx = dc[minChange];
             m->dy = dr[minChange];
             m->when += moves->costs->hiker[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
             break;
         case RivalLogic:
+            j = rand() % 8;
             for (int i= 0; i< 8; i++){
-                if (moves->costs->rival[ch->vPos + dr[i]][ch->hPos + dc[i]].cost < min){
-                    min = moves->costs->rival[ch->vPos + dr[i]][ch->hPos + dc[i]].cost;
-                    minChange = i;
+                if (moves->costs->rival[ch->vPos + dr[j]][ch->hPos + dc[j]].cost < min){
+                    min = moves->costs->rival[ch->vPos + dr[j]][ch->hPos + dc[j]].cost;
+                    minChange = j;
                 }
+                j = (j + 1) % 8;
             }
             m->dx = dc[minChange];
             m->dy = dr[minChange];
