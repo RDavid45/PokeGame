@@ -20,6 +20,7 @@ int moveCompare(const void *v1, const void *v2){
 
 int initMoveController(MoveController *moves, Board *b, MovementCosts *mc, CharacterMap *cmap){
     moves->b = b;
+    moves->h = malloc(sizeof(Heap));
     initHeap(moves->h, moveCompare, sizeof(Move));
     moves->costs = mc;
     moves->cmap = cmap;
