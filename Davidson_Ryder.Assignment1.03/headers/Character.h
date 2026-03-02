@@ -5,14 +5,14 @@
 #define CHARACTER_H
 
 typedef enum characterType {
-    Hiker = 0x01,
-    Rival = 0x02,
-    Swimmer = 0x04,
-    Trainer = 0x08,
-    Wanderer = 0x10,
-    Sentinal = 0x20,
-    Explorer = 0x40,
-    Pacer = 0x80,
+    HikerLogic = 0x01,
+    RivalLogic = 0x02,
+    SwimmerLogic = 0x04,
+    TrainerLogic = 0x08,
+    WandererLogic = 0x10,
+    SentinalLogic = 0x20,
+    ExplorerLogic = 0x40,
+    PacerLogic = 0x80,
 } characterType;
 
 typedef struct Character{

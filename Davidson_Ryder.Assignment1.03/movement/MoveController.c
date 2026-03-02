@@ -34,7 +34,7 @@ int scheduleNextMove(MoveQueue *moves, Move *m){
     int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
     int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
     switch (ch->npct){
-        case Hiker:
+        case HikerLogic:
             int minChange;
             int min = INF;
             for (int i= 0; i< 8; i++){
@@ -47,7 +47,7 @@ int scheduleNextMove(MoveQueue *moves, Move *m){
             m->dy = dr[minChange];
             m->when += moves->costs->hiker[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
             break;
-        case Rival:
+        case RivalLogic:
         int minChange;
             int min = INF;
             for (int i= 0; i< 8; i++){
@@ -60,7 +60,7 @@ int scheduleNextMove(MoveQueue *moves, Move *m){
             m->dy = dr[minChange];
             m->when += moves->costs->rival[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
             break;
-        case Swimmer:
+        case SwimmerLogic:
             int change = rand() % 8;
             while (moves->b->board[ch->vPos + dr[change]][ch->hPos + dc[change]] != '~'){
                 change = rand() % 8;
@@ -69,12 +69,12 @@ int scheduleNextMove(MoveQueue *moves, Move *m){
             m->dy = dr[change];
             m->when += 7;
             break;
-        case Sentinal:
+        case SentinalLogic:
             m->dx = 0;
             m->dy = 0;
             m->when += INF;
             break;
-        case Wanderer:
+        case WandererLogic:
             char terrain = moves->b->board[ch->vPos][ch->hPos];
             if (moves->b->board[ch->vPos + m->dy][ch->hPos + m->dx] == terrain){
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
@@ -88,7 +88,7 @@ int scheduleNextMove(MoveQueue *moves, Move *m){
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 }
             break;
-        case Explorer:
+        case ExplorerLogic:
             if (moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight != INF){
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 } else {
@@ -102,7 +102,7 @@ int scheduleNextMove(MoveQueue *moves, Move *m){
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 }
             break;
-        case Pacer:
+        case PacerLogic:
             if (moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight != INF){
                     m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
                 } else {
