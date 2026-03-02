@@ -25,9 +25,9 @@ int main(int argc, char *argv[])
     initMoveController(&mq, m.map[m.vPos][m.hPos], &c, &cmap);
     assert(mq.h != NULL);
     Character pc;
-    initCharacter(&pc, '@', TrainerLogic, Trainer);
+    initCharacter(&pc, '@', ExplorerLogic, Trainer);
     placeCharacter(&cmap, &pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
-    Move move = {.c = &pc, .dx = 0, .dy = 0, .when = 100000};
+    Move move = {.c = &pc, .dx = 1, .dy = 1, .when = 100000};
     scheduleMove(&mq, &move);
     if (argc > 1){
         spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, atoi(argv[1]));
