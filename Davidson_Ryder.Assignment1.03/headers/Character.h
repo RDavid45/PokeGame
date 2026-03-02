@@ -7,12 +7,11 @@
 typedef enum characterType {
     HikerLogic = 0x01,
     RivalLogic = 0x02,
-    SwimmerLogic = 0x04,
-    TrainerLogic = 0x08,
-    WandererLogic = 0x10,
-    SentinalLogic = 0x20,
-    ExplorerLogic = 0x40,
-    PacerLogic = 0x80,
+    TrainerLogic = 0x04,
+    WandererLogic = 0x08,
+    SentinalLogic = 0x10,
+    ExplorerLogic = 0x20,
+    PacerLogic = 0x40,
 } characterType;
 
 typedef struct Character{

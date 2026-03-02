@@ -65,12 +65,11 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             int hereCost = moves->costs->hiker[r][c].cost;
 
             if (bestI >= 0 && bestCost < hereCost) {
-                // Take the downhill improvement
                 m->dx = dc[bestI];
                 m->dy = dr[bestI];
                 m->when += moves->costs->hiker[r + m->dy][c + m->dx].weight;
             } else {
-                // 2) Plateau fallback: any same-cost valid neighbor?
+                // 2)any same-cost valid neighbor?
                 int candidates[8], cnt = 0;
                 for (int k = 0; k < 8; ++k) {
                     int i  = (start + k) & 7;
@@ -87,7 +86,6 @@ int scheduleNextMove(MoveController *moves, Move *m) {
                     m->dx = dc[i]; m->dy = dr[i];
                     m->when += moves->costs->hiker[r + m->dy][c + m->dx].weight;
                 } else {
-                    // 3) Nothing valid — stall one tick
                     STALL();
                 }
             }
@@ -99,7 +97,6 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             int bestCost = INF;
             int start = rand() % 8;
 
-            // 1) Try strictly-better downhill neighbor (valid, unoccupied)
             for (int k = 0; k < 8; ++k) {
                 int i  = (start + k) & 7;
                 int nr = r + dr[i], nc = c + dc[i];
@@ -118,7 +115,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
                 m->dy = dr[bestI];
                 m->when += moves->costs->rival[r + m->dy][c + m->dx].weight;
             } else {
-                // 2) Plateau fallback: same cost as current
+                // 2) same cost as current
                 int candidates[8], cnt = 0;
                 for (int k = 0; k < 8; ++k) {
                     int i  = (start + k) & 7;
@@ -140,27 +137,6 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             }
             break;
         }
-
-        case SwimmerLogic: {
-            // Pick any adjacent water '~' that is in-bounds and free
-            int candidates[8], cnt = 0, start = rand() % 8;
-            for (int k = 0; k < 8; ++k) {
-                int i  = (start + k) & 7;
-                int nr = r + dr[i], nc = c + dc[i];
-                if (!inBounds(nr, nc)) continue;
-                if (moves->cmap->cmap[nr][nc] != NULL) continue;
-                if (moves->b->board[nr][nc] == '~') candidates[cnt++] = i;
-            }
-            if (cnt > 0) {
-                int i = candidates[rand() % cnt];
-                m->dx = dc[i]; m->dy = dr[i];
-                m->when += 7;
-            } else {
-                STALL();
-            }
-            break;
-        }
-
         case SentinalLogic:
             m->dx = 0;
             m->dy = 0;

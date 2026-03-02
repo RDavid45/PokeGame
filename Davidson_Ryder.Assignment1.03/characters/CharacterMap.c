@@ -82,10 +82,20 @@ SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, Movement
 
     int max_attempts = count * 50;
     while (sr.placed < count && sr.failed_attempts < max_attempts) {
-        characterType npc = randomBehavior();
-        type cc = costCategoryFor(npc);
-        int r = (rand() % 19) + 1;  
-        int c = (rand() % 78) + 1;  
+            characterType npc = randomBehavior();
+            type cc = costCategoryFor(npc);
+            int r = (rand() % 19) + 1;  
+            int c = (rand() % 78) + 1;  
+        if (sr.placed == 0){
+            npc = RivalLogic;
+            cc = costCategoryFor(npc);  
+        } else if (sr.placed == 1){
+            npc = HikerLogic;
+            cc = costCategoryFor(npc);   
+        } else {
+            npc = randomBehavior();
+            cc = costCategoryFor(npc); 
+        }
         if (!canSpawn(cmap, b, mc, cc, r, c)) { sr.failed_attempts++; continue; }
 
         Character *ch = (Character*)malloc(sizeof(*ch));
