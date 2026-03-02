@@ -31,94 +31,226 @@ int scheduleMove(MoveController *moves, Move *m){
     return heapAdd(moves->h, m);
 }
 
-int scheduleNextMove(MoveController *moves, Move *m){
+int scheduleNextMove(MoveController *moves, Move *m) {
     Character *ch = m->c;
-    int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
-    int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
-    int minChange;
-    int min = INF;
-    int j;
-    switch (ch->npct){
-        case HikerLogic:
-            j = rand() % 8;
-            for (int i= 0; i< 8; i++){
-                if (moves->costs->hiker[ch->vPos + dr[j]][ch->hPos + dc[j]].cost < min){
-                    min = moves->costs->hiker[ch->vPos + dr[j]][ch->hPos + dc[j]].cost;
-                    minChange = j;
+    static const int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
+    static const int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
+
+    int r = ch->vPos;
+    int c = ch->hPos;
+
+    #define STALL() do { m->dx = 0; m->dy = 0; m->when += 1; } while (0)
+
+    switch (ch->npct) {
+        case HikerLogic: {
+            int bestI = -1;
+            int bestCost = INF;
+            int start = rand() % 8;
+
+            for (int k = 0; k < 8; ++k) {
+                int i  = (start + k) & 7;
+                int nr = r + dr[i], nc = c + dc[i];
+                if (!inBounds(nr, nc)) continue;
+                if (moves->cmap->cmap[nr][nc] != NULL) continue;
+                int cost   = moves->costs->hiker[nr][nc].cost;
+                int weight = moves->costs->hiker[nr][nc].weight;
+                if (weight >= INF || cost >= INF) continue;
+                if (cost < bestCost) { bestCost = cost; bestI = i; }
+            }
+
+            int hereCost = moves->costs->hiker[r][c].cost;
+
+            if (bestI >= 0 && bestCost < hereCost) {
+                // Take the downhill improvement
+                m->dx = dc[bestI];
+                m->dy = dr[bestI];
+                m->when += moves->costs->hiker[r + m->dy][c + m->dx].weight;
+            } else {
+                // 2) Plateau fallback: any same-cost valid neighbor?
+                int candidates[8], cnt = 0;
+                for (int k = 0; k < 8; ++k) {
+                    int i  = (start + k) & 7;
+                    int nr = r + dr[i], nc = c + dc[i];
+                    if (!inBounds(nr, nc)) continue;
+                    if (moves->cmap->cmap[nr][nc] != NULL) continue;
+                    int cost   = moves->costs->hiker[nr][nc].cost;
+                    int weight = moves->costs->hiker[nr][nc].weight;
+                    if (weight >= INF || cost >= INF) continue;
+                    if (cost == hereCost) candidates[cnt++] = i;
                 }
-                j = (j + 1) % 8;
-            }
-            m->dx = dc[minChange];
-            m->dy = dr[minChange];
-            m->when += moves->costs->hiker[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
-            break;
-        case RivalLogic:
-            j = rand() % 8;
-            for (int i= 0; i< 8; i++){
-                if (moves->costs->rival[ch->vPos + dr[j]][ch->hPos + dc[j]].cost < min){
-                    min = moves->costs->rival[ch->vPos + dr[j]][ch->hPos + dc[j]].cost;
-                    minChange = j;
+                if (cnt > 0) {
+                    int i = candidates[rand() % cnt];
+                    m->dx = dc[i]; m->dy = dr[i];
+                    m->when += moves->costs->hiker[r + m->dy][c + m->dx].weight;
+                } else {
+                    // 3) Nothing valid — stall one tick
+                    STALL();
                 }
-                j = (j + 1) % 8;
             }
-            m->dx = dc[minChange];
-            m->dy = dr[minChange];
-            m->when += moves->costs->rival[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight;
             break;
-        case SwimmerLogic:
-            minChange = rand() % 8;
-            while (moves->b->board[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]] != '~'){
-                minChange = rand() % 8;
+        }
+
+        case RivalLogic: {
+            int bestI = -1;
+            int bestCost = INF;
+            int start = rand() % 8;
+
+            // 1) Try strictly-better downhill neighbor (valid, unoccupied)
+            for (int k = 0; k < 8; ++k) {
+                int i  = (start + k) & 7;
+                int nr = r + dr[i], nc = c + dc[i];
+                if (!inBounds(nr, nc)) continue;
+                if (moves->cmap->cmap[nr][nc] != NULL) continue;
+                int cost   = moves->costs->rival[nr][nc].cost;
+                int weight = moves->costs->rival[nr][nc].weight;
+                if (weight >= INF || cost >= INF) continue;
+                if (cost < bestCost) { bestCost = cost; bestI = i; }
             }
-            m->dx = dc[minChange];
-            m->dy = dr[minChange];
-            m->when += 7;
+
+            int hereCost = moves->costs->rival[r][c].cost;
+
+            if (bestI >= 0 && bestCost < hereCost) {
+                m->dx = dc[bestI];
+                m->dy = dr[bestI];
+                m->when += moves->costs->rival[r + m->dy][c + m->dx].weight;
+            } else {
+                // 2) Plateau fallback: same cost as current
+                int candidates[8], cnt = 0;
+                for (int k = 0; k < 8; ++k) {
+                    int i  = (start + k) & 7;
+                    int nr = r + dr[i], nc = c + dc[i];
+                    if (!inBounds(nr, nc)) continue;
+                    if (moves->cmap->cmap[nr][nc] != NULL) continue;
+                    int cost   = moves->costs->rival[nr][nc].cost;
+                    int weight = moves->costs->rival[nr][nc].weight;
+                    if (weight >= INF || cost >= INF) continue;
+                    if (cost == hereCost) candidates[cnt++] = i;
+                }
+                if (cnt > 0) {
+                    int i = candidates[rand() % cnt];
+                    m->dx = dc[i]; m->dy = dr[i];
+                    m->when += moves->costs->rival[r + m->dy][c + m->dx].weight;
+                } else {
+                    STALL();
+                }
+            }
             break;
+        }
+
+        case SwimmerLogic: {
+            // Pick any adjacent water '~' that is in-bounds and free
+            int candidates[8], cnt = 0, start = rand() % 8;
+            for (int k = 0; k < 8; ++k) {
+                int i  = (start + k) & 7;
+                int nr = r + dr[i], nc = c + dc[i];
+                if (!inBounds(nr, nc)) continue;
+                if (moves->cmap->cmap[nr][nc] != NULL) continue;
+                if (moves->b->board[nr][nc] == '~') candidates[cnt++] = i;
+            }
+            if (cnt > 0) {
+                int i = candidates[rand() % cnt];
+                m->dx = dc[i]; m->dy = dr[i];
+                m->when += 7;
+            } else {
+                STALL();
+            }
+            break;
+        }
+
         case SentinalLogic:
             m->dx = 0;
             m->dy = 0;
             m->when += INF;
             break;
-        case WandererLogic:
-            char terrain = moves->b->board[ch->vPos][ch->hPos];
-            if (moves->b->board[ch->vPos + m->dy][ch->hPos + m->dx] == terrain){
-                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
-                } else {
-                    minChange = rand() % 8;
-                    while (moves->b->board[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]] != terrain){
-                        minChange = rand() % 8;
-                    }
-                    m->dx = dc[minChange];
-                    m->dy = dr[minChange];
-                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+
+        case WandererLogic: {
+            // Stay on the same terrain if possible; otherwise pick another tile of that terrain.
+            char terrain = moves->b->board[r][c];
+            int nr = r + m->dy, nc = c + m->dx;
+            int can_continue = inBounds(nr, nc) &&
+                               moves->cmap->cmap[nr][nc] == NULL &&
+                               moves->b->board[nr][nc] == terrain &&
+                               moves->costs->other[nr][nc].weight != INF;
+
+            if (!can_continue) {
+                int candidates[8], cnt = 0, start = rand() % 8;
+                for (int k = 0; k < 8; ++k) {
+                    int i  = (start + k) & 7;
+                    nr = r + dr[i]; nc = c + dc[i];
+                    if (!inBounds(nr, nc)) continue;
+                    if (moves->cmap->cmap[nr][nc] != NULL) continue;
+                    if (moves->b->board[nr][nc] != terrain) continue;
+                    if (moves->costs->other[nr][nc].weight == INF) continue;
+                    candidates[cnt++] = i;
                 }
-            break;
-        case ExplorerLogic:
-            if (moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight != INF){
-                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                if (cnt > 0) {
+                    int i = candidates[rand() % cnt];
+                    m->dx = dc[i]; m->dy = dr[i];
                 } else {
-                    minChange = rand() % 8;
-                    while (moves->costs->other[ch->vPos + dr[minChange]][ch->hPos + dc[minChange]].weight 
-                        == INF){
-                        minChange = rand() % 8;
-                    }
-                    m->dx = dc[minChange];
-                    m->dy = dr[minChange];
-                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                    STALL();
+                    break;
                 }
+            }
+            m->when += moves->costs->other[r + m->dy][c + m->dx].weight;
             break;
-        case PacerLogic:
-            if (moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight != INF){
-                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+        }
+
+        case ExplorerLogic: {
+            // Prefer continuing if the step is legal; else pick any legal neighbor.
+            int nr = r + m->dy, nc = c + m->dx;
+            int can_continue = inBounds(nr, nc) &&
+                               moves->cmap->cmap[nr][nc] == NULL &&
+                               moves->costs->other[nr][nc].weight != INF;
+            if (!can_continue) {
+                int candidates[8], cnt = 0, start = rand() % 8;
+                for (int k = 0; k < 8; ++k) {
+                    int i  = (start + k) & 7;
+                    nr = r + dr[i]; nc = c + dc[i];
+                    if (!inBounds(nr, nc)) continue;
+                    if (moves->cmap->cmap[nr][nc] != NULL) continue;
+                    if (moves->costs->other[nr][nc].weight == INF) continue;
+                    candidates[cnt++] = i;
+                }
+                if (cnt > 0) {
+                    int i = candidates[rand() % cnt];
+                    m->dx = dc[i]; m->dy = dr[i];
+                    nr = r + m->dy; nc = c + m->dx;
                 } else {
-                    m->dx *= -1;
-                    m->dy *= -1;
-                    m->when += moves->costs->other[ch->vPos + m->dy][ch->hPos + m->dx].weight;
+                    STALL();
+                    break;
                 }
+            }
+            m->when += moves->costs->other[nr][nc].weight;
             break;
+        }
+
+        case PacerLogic: {
+            // Try forward; if blocked, reverse; if still blocked, stall.
+            int nr = r + m->dy, nc = c + m->dx;
+            int ok = inBounds(nr, nc) &&
+                     moves->cmap->cmap[nr][nc] == NULL &&
+                     moves->costs->other[nr][nc].weight != INF;
+
+            if (!ok) {
+                m->dx = -m->dx;
+                m->dy = -m->dy;
+                nr = r + m->dy; nc = c + m->dx;
+                ok = inBounds(nr, nc) &&
+                     moves->cmap->cmap[nr][nc] == NULL &&
+                     moves->costs->other[nr][nc].weight != INF;
+                if (!ok) {
+                    STALL();
+                    break;
+                }
+            }
+            m->when += moves->costs->other[r + m->dy][c + m->dx].weight;
+            break;
+        }
+
         default:
             return -1;
     }
+
     return scheduleMove(moves, m);
 }
 
