@@ -39,17 +39,17 @@ int findNextDirection(const MoveController *moves, int r, int c) {
     static const int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
     static const int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
     int candidates[8], cnt = 0;
-                for (int k = 0; k < 8; k++) {
-                    int nr = r + dr[k]; int nc = c + dc[k];
-                    if (!inBounds(nr, nc)) continue;
-                    if (moves->costs->other[nr][nc].weight == INF) continue;
-                    candidates[cnt++] = k;
-                }
-                if (cnt > 0) {
-                    return candidates[rand() % cnt];
-                } else {
-                    return -1;
-                }
+    for (int k = 0; k < 8; k++) {
+        int nr = r + dr[k]; int nc = c + dc[k];
+        if (!inBounds(nr, nc)) continue;
+        if (moves->costs->other[nr][nc].weight > 100) continue;
+        candidates[cnt++] = k;
+    }
+    if (cnt > 0) {
+        return candidates[rand() % cnt];
+    } else {
+        return -1;
+    }
 
 }
 
@@ -167,7 +167,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             int nr = r + m->dy, nc = c + m->dx;
             int can_continue = inBounds(nr, nc) && 
                         //moves->cmap->cmap[nr][nc] == NULL &&
-                        moves->b->board[nr][nc] == terrain && moves->costs->other[nr][nc].weight != INF;
+                        moves->b->board[nr][nc] == terrain && moves->costs->other[nr][nc].weight < 100;
 
             if (nr == r && nc == c) {
                 can_continue = 0;
@@ -190,11 +190,11 @@ int scheduleNextMove(MoveController *moves, Move *m) {
         }
 
         case ExplorerLogic: {
-            // Prefer continuing if the step is legal; else pick any legal neighbor.
+
             int nr = r + m->dy, nc = c + m->dx;
             int can_continue = inBounds(nr, nc) &&
                         //moves->cmap->cmap[nr][nc] == NULL &&
-                        moves->costs->other[nr][nc].weight != INF;
+                        moves->costs->other[nr][nc].weight < 100;
 
             if (nr == r && nc == c) {
                 can_continue = 0;
@@ -231,7 +231,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
                 }
             }
 
-            if (!inBounds(nr, nc) || moves->costs->other[nr][nc].weight == INF) {
+            if (!inBounds(nr, nc) || moves->costs->other[nr][nc].weight > 100) {
                 m->dx = -m->dx;
                 m->dy = -m->dy;
                 nr = r + m->dy; nc = c + m->dx;
