@@ -201,7 +201,6 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             }
 
             if (!can_continue) {
-                int nr, nc;
                 int i = findNextDirection(moves, r, c);
 
                 if (i >= 0) {
