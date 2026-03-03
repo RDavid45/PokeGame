@@ -211,15 +211,8 @@ int scheduleNextMove(MoveController *moves, Move *m) {
                 m->dx = -m->dx;
                 m->dy = -m->dy;
                 nr = r + m->dy; nc = c + m->dx;
-                ok = inBounds(nr, nc) &&
-                     moves->cmap->cmap[nr][nc] == NULL &&
-                     moves->costs->other[nr][nc].weight != INF;
-                if (!ok) {
-                    STALL();
-                    break;
-                }
             }
-            m->when += moves->costs->other[r + m->dy][c + m->dx].weight;
+            m->when += moves->costs->other[nr][nc].weight;
             break;
         }
 
