@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     Move move = {.c = &pc, .dx = 1, .dy = 1, .when = 0};
     scheduleMove(&mq, &move);
     if (getopt(argc, argv, "--numtrainers") != -1) {
-        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, atoi(getopt(argc, argv, "--numtrainers")));
+        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, getopt(argc, argv, "--numtrainers"));
     } else {
         spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, 10);
     }
