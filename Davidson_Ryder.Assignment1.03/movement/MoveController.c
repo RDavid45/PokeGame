@@ -43,7 +43,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
     int r = ch->vPos;
     int c = ch->hPos;
 
-    #define STALL() do { m->dx = 0; m->dy = 0; m->when += 1; } while (0)
+    #define STALL() do { m->dx = 0; m->dy = 0; m->when += 10; } while (0)
 
     switch (ch->npct) {
         case HikerLogic: {
@@ -150,6 +150,10 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             int can_continue = inBounds(nr, nc) && moves->cmap->cmap[nr][nc] == NULL &&
                         moves->b->board[nr][nc] == terrain && moves->costs->other[nr][nc].weight != INF;
 
+            if (nr == r && nc == c) {
+                can_continue = 0;
+            }
+
             if (!can_continue) {
                 int candidates[8], cnt = 0;
                 for (int k = 0; k < 8; k++) {
@@ -176,8 +180,12 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             // Prefer continuing if the step is legal; else pick any legal neighbor.
             int nr = r + m->dy, nc = c + m->dx;
             int can_continue = inBounds(nr, nc) &&
-                               moves->cmap->cmap[nr][nc] == NULL &&
-                               moves->costs->other[nr][nc].weight != INF;
+                        moves->cmap->cmap[nr][nc] == NULL && moves->costs->other[nr][nc].weight != INF;
+
+            if (nr == r && nc == c) {
+                can_continue = 0;
+            }
+
             if (!can_continue) {
                 int candidates[8], cnt = 0;
                 for (int k = 0; k < 8; k++) {
@@ -243,7 +251,7 @@ int handleMove(MoveController *moves, Move *m) {
     if (!inBounds(nRow, nCol)) {
         if (ch->npct != TrainerLogic){
         scheduleNextMove(moves, m);
-    }
+        }
         return -1;
     }
 
@@ -259,18 +267,20 @@ int handleMove(MoveController *moves, Move *m) {
     if (w >= INF) {
         if (ch->npct != TrainerLogic){
         scheduleNextMove(moves, m);
-    }
+        }
         return -1;
     }
 
     if (moves->cmap->cmap[ch->vPos][ch->hPos] == ch && moves->cmap->cmap[nRow][nCol] == NULL) {
         moves->cmap->cmap[ch->vPos][ch->hPos] = NULL;
         moves->cmap->cmap[nRow][nCol] = ch;
+        ch->vPos = nRow;
+        ch->hPos = nCol;
+        if (ch->t == Trainer) {
+            updateCosts(moves->costs, moves->b, nRow, nCol);
+        }
     }
     
-
-    ch->vPos = nRow;
-    ch->hPos = nCol;
 
     if (ch->npct != TrainerLogic){
         scheduleNextMove(moves, m);
