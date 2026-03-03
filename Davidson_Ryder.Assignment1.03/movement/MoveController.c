@@ -51,7 +51,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             int bestCost = INF;
             int start = rand() % 8;
 
-            for (int k = 0; k < 8; ++k) {
+            for (int k = 0; k < 8; k++) {
                 int i  = (start + k) & 7;
                 int nr = r + dr[i], nc = c + dc[i];
                 if (!inBounds(nr, nc)) continue;
@@ -71,7 +71,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             } else {
                 // 2)any same-cost valid neighbor?
                 int candidates[8], cnt = 0;
-                for (int k = 0; k < 8; ++k) {
+                for (int k = 0; k < 8; k++) {
                     int i  = (start + k) & 7;
                     int nr = r + dr[i], nc = c + dc[i];
                     if (!inBounds(nr, nc)) continue;
@@ -117,7 +117,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             } else {
                 // 2) same cost as current
                 int candidates[8], cnt = 0;
-                for (int k = 0; k < 8; ++k) {
+                for (int k = 0; k < 8; k++) {
                     int i  = (start + k) & 7;
                     int nr = r + dr[i], nc = c + dc[i];
                     if (!inBounds(nr, nc)) continue;
@@ -147,21 +147,18 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             // Stay on the same terrain if possible; otherwise pick another tile of that terrain.
             char terrain = moves->b->board[r][c];
             int nr = r + m->dy, nc = c + m->dx;
-            int can_continue = inBounds(nr, nc) &&
-                               moves->cmap->cmap[nr][nc] == NULL &&
-                               moves->b->board[nr][nc] == terrain &&
-                               moves->costs->other[nr][nc].weight != INF;
+            int can_continue = inBounds(nr, nc) && moves->cmap->cmap[nr][nc] == NULL &&
+                        moves->b->board[nr][nc] == terrain && moves->costs->other[nr][nc].weight != INF;
 
             if (!can_continue) {
-                int candidates[8], cnt = 0, start = rand() % 8;
-                for (int k = 0; k < 8; ++k) {
-                    int i  = (start + k) & 7;
-                    nr = r + dr[i]; nc = c + dc[i];
+                int candidates[8], cnt = 0;
+                for (int k = 0; k < 8; k++) {
+                    nr = r + dr[k]; nc = c + dc[k];
                     if (!inBounds(nr, nc)) continue;
                     if (moves->cmap->cmap[nr][nc] != NULL) continue;
                     if (moves->b->board[nr][nc] != terrain) continue;
                     if (moves->costs->other[nr][nc].weight == INF) continue;
-                    candidates[cnt++] = i;
+                    candidates[cnt++] = k;
                 }
                 if (cnt > 0) {
                     int i = candidates[rand() % cnt];
@@ -182,14 +179,13 @@ int scheduleNextMove(MoveController *moves, Move *m) {
                                moves->cmap->cmap[nr][nc] == NULL &&
                                moves->costs->other[nr][nc].weight != INF;
             if (!can_continue) {
-                int candidates[8], cnt = 0, start = rand() % 8;
-                for (int k = 0; k < 8; ++k) {
-                    int i  = (start + k) & 7;
-                    nr = r + dr[i]; nc = c + dc[i];
+                int candidates[8], cnt = 0;
+                for (int k = 0; k < 8; k++) {
+                    nr = r + dr[k]; nc = c + dc[k];
                     if (!inBounds(nr, nc)) continue;
                     if (moves->cmap->cmap[nr][nc] != NULL) continue;
                     if (moves->costs->other[nr][nc].weight == INF) continue;
-                    candidates[cnt++] = i;
+                    candidates[cnt++] = k;
                 }
                 if (cnt > 0) {
                     int i = candidates[rand() % cnt];
