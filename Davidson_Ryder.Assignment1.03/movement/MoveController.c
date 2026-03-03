@@ -147,7 +147,8 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             // Stay on the same terrain if possible; otherwise pick another tile of that terrain.
             char terrain = moves->b->board[r][c];
             int nr = r + m->dy, nc = c + m->dx;
-            int can_continue = inBounds(nr, nc) && moves->cmap->cmap[nr][nc] == NULL &&
+            int can_continue = inBounds(nr, nc) && 
+                        //moves->cmap->cmap[nr][nc] == NULL &&
                         moves->b->board[nr][nc] == terrain && moves->costs->other[nr][nc].weight != INF;
 
             if (nr == r && nc == c) {
@@ -180,7 +181,8 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             // Prefer continuing if the step is legal; else pick any legal neighbor.
             int nr = r + m->dy, nc = c + m->dx;
             int can_continue = inBounds(nr, nc) &&
-                        moves->cmap->cmap[nr][nc] == NULL && moves->costs->other[nr][nc].weight != INF;
+                        //moves->cmap->cmap[nr][nc] == NULL &&
+                        moves->costs->other[nr][nc].weight != INF;
 
             if (nr == r && nc == c) {
                 can_continue = 0;
@@ -191,7 +193,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
                 for (int k = 0; k < 8; k++) {
                     nr = r + dr[k]; nc = c + dc[k];
                     if (!inBounds(nr, nc)) continue;
-                    if (moves->cmap->cmap[nr][nc] != NULL) continue;
+                    //if (moves->cmap->cmap[nr][nc] != NULL) continue;
                     if (moves->costs->other[nr][nc].weight == INF) continue;
                     candidates[cnt++] = k;
                 }
@@ -212,7 +214,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             // Try forward; if blocked, reverse; if still blocked, stall.
             int nr = r + m->dy, nc = c + m->dx;
             int ok = inBounds(nr, nc) &&
-                     moves->cmap->cmap[nr][nc] == NULL &&
+                     //moves->cmap->cmap[nr][nc] == NULL &&
                      moves->costs->other[nr][nc].weight != INF;
 
             if (!ok) {
