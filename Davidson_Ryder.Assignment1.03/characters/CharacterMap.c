@@ -59,23 +59,6 @@ static int canSpawn(const CharacterMap *cm, Board *b, const MovementCosts *mc, t
     return 1;
 }
 
-static void pickInitialDir(Board *b, const MovementCosts *mc, characterType npc, int r, int c, int *dx, int *dy) {
-    static const int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
-    static const int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
-    *dx = 0; *dy = 0;
-    if (npc == HikerLogic || npc == RivalLogic || npc == SentinalLogic) return; // decided later or doesn't move
-
-    char spawn_terrain = b->board[r][c];
-    for (int tries = 0; tries < 16; ++tries) {
-        int i = rand() % 8;
-        int nr = r + dr[i], nc = c + dc[i];
-        if (!inBounds(nr, nc)) continue;
-        if (npc == WandererLogic && b->board[nr][nc] != spawn_terrain) continue;
-        if (mc->other[nr][nc].weight >= INF) continue;
-        *dx = dc[i]; *dy = dr[i];
-        return;
-    }
-}
 
 SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, MovementCosts *mc, int count){
     SpawnResult sr = { .requested = count, .placed = 0, .failed_attempts = 0 };
