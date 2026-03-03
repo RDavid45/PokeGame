@@ -213,11 +213,7 @@ int scheduleNextMove(MoveController *moves, Move *m) {
         case PacerLogic: {
             // Try forward; if blocked, reverse; if still blocked, stall.
             int nr = r + m->dy, nc = c + m->dx;
-            int ok = inBounds(nr, nc) &&
-                     //moves->cmap->cmap[nr][nc] == NULL &&
-                     moves->costs->other[nr][nc].weight != INF;
-
-            if (!ok) {
+            if (!inBounds(nr, nc) || moves->costs->other[nr][nc].weight == INF) {
                 m->dx = -m->dx;
                 m->dy = -m->dy;
                 nr = r + m->dy; nc = c + m->dx;
