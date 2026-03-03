@@ -108,7 +108,6 @@ SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, Movement
         Move m = {0};
         m.c = ch;
         m.when = 0;
-        pickInitialDir(b, mc, npc, r, c, &m.dx, &m.dy);
         scheduleMove(mq, &m);
 
         sr.placed++;

@@ -35,6 +35,24 @@ static inline int inBounds(int r, int c) {
     return r > 0 && r < 20 && c > 0 && c < 79;
 }
 
+int findNextDirection(const MoveController *moves, int r, int c) {
+    static const int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
+    static const int dc[8] = {-1, 0, 1,-1, 1,-1, 0, 1};
+    int candidates[8], cnt = 0;
+                for (int k = 0; k < 8; k++) {
+                    int nr = r + dr[k]; int nc = c + dc[k];
+                    if (!inBounds(nr, nc)) continue;
+                    if (moves->costs->other[nr][nc].weight == INF) continue;
+                    candidates[cnt++] = k;
+                }
+                if (cnt > 0) {
+                    return candidates[rand() % cnt];
+                } else {
+                    return -1;
+                }
+
+}
+
 int scheduleNextMove(MoveController *moves, Move *m) {
     Character *ch = m->c;
     static const int dr[8] = {-1,-1,-1, 0, 0, 1, 1, 1};
@@ -156,18 +174,12 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             }
 
             if (!can_continue) {
-                int candidates[8], cnt = 0;
-                for (int k = 0; k < 8; k++) {
-                    nr = r + dr[k]; nc = c + dc[k];
-                    if (!inBounds(nr, nc)) continue;
-                    if (moves->cmap->cmap[nr][nc] != NULL) continue;
-                    if (moves->b->board[nr][nc] != terrain) continue;
-                    if (moves->costs->other[nr][nc].weight == INF) continue;
-                    candidates[cnt++] = k;
+                int i = findNextDirection(moves, r, c);
+                while (i >= 0 && moves->b->board[r + dr[i]][c + dc[i]] != terrain) {
+                    i = findNextDirection(moves, r, c);
                 }
-                if (cnt > 0) {
-                    int i = candidates[rand() % cnt];
-                    m->dx = dc[i]; m->dy = dr[i];
+                if ((i = findNextDirection(moves, r, c)) >= 0) {
+                    m->dx = dc[i]; m->dy = dr[i];    
                 } else {
                     STALL();
                     break;
@@ -189,18 +201,12 @@ int scheduleNextMove(MoveController *moves, Move *m) {
             }
 
             if (!can_continue) {
-                int candidates[8], cnt = 0;
-                for (int k = 0; k < 8; k++) {
-                    nr = r + dr[k]; nc = c + dc[k];
-                    if (!inBounds(nr, nc)) continue;
-                    //if (moves->cmap->cmap[nr][nc] != NULL) continue;
-                    if (moves->costs->other[nr][nc].weight == INF) continue;
-                    candidates[cnt++] = k;
-                }
-                if (cnt > 0) {
-                    int i = candidates[rand() % cnt];
+                int nr, nc;
+                int i = findNextDirection(moves, r, c);
+
+                if (i >= 0) {
+                    nr = r + dr[i]; nc = c + dc[i];
                     m->dx = dc[i]; m->dy = dr[i];
-                    nr = r + m->dy; nc = c + m->dx;
                 } else {
                     STALL();
                     break;
@@ -212,7 +218,19 @@ int scheduleNextMove(MoveController *moves, Move *m) {
 
         case PacerLogic: {
             // Try forward; if blocked, reverse; if still blocked, stall.
+
             int nr = r + m->dy, nc = c + m->dx;
+
+            if (nr == r && nc == c) {
+                int i = findNextDirection(moves, r, c);
+                if (i >= 0) {
+                    m->dx = dc[i]; m->dy = dr[i];
+                } else {
+                    STALL();
+                    break;
+                }
+            }
+
             if (!inBounds(nr, nc) || moves->costs->other[nr][nc].weight == INF) {
                 m->dx = -m->dx;
                 m->dy = -m->dy;
