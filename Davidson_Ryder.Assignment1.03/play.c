@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
     placeCharacter(&cmap, &pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
     Move move = {.c = &pc, .dx = 1, .dy = 1, .when = 0};
     scheduleMove(&mq, &move);
-    if (getopt(argc, argv, "--numtrainers") != -1) {
-        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, getopt(argc, argv, "--numtrainers"));
+    if (argc > 1){
+        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, atoi(argv[1]));
     } else {
         spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, 10);
     }
