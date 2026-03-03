@@ -39,9 +39,9 @@ int main(int argc, char *argv[])
         if (heapEmpty(mq.h)) break;
         heapPop(mq.h, &move);
         handleMove(&mq, &move);
+        system("clear");
         showGameState(&m, &cmap);
         usleep(25000);
-        system("clear");
     }
     while (1) {
         updateCosts(&c, m.map[m.vPos][m.hPos], pc.vPos, pc.hPos);
