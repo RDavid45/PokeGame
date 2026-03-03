@@ -221,6 +221,9 @@ int scheduleNextMove(MoveController *moves, Move *m) {
                 nr = r + m->dy; nc = c + m->dx;
             }
             m->when += moves->costs->other[nr][nc].weight;
+            if (m->when >= INF) {
+                return -1;
+            }
             break;
         }
 
