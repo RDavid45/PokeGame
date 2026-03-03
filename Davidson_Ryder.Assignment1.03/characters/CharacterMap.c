@@ -49,7 +49,6 @@ static type costCategoryFor(characterType t) {
     }
 }
 
-static int inBounds(int r, int c) { return (r > 0 && r < 20 && c > 0 && c < 79);}
 
 static int isOccupied(const CharacterMap *cmap,int r, int c) {return cmap->cmap[r][c] != NULL;}
 
