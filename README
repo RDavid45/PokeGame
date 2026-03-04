@@ -43,6 +43,7 @@ NPCs have 6 different logic types for movement:
 4. pacer - moves back and forth in a straight line between until it hits impassable terrain then it turns around
 5. sentry - does not move
 6. explorer - moves in a straight line until it hits impassable terrain then it picks a new direction
-every NPC has a next move that is stored in the movement controller and is updated every time they move.
-The movement controller has a performs each move then selects the next move for each NPC
+Every NPC has a next move that is stored in the movement controller and is updated every time they move.
+The movement controller has a performs each move then selects the next move for each NPC.
+The movement controller is logically a heap, and characters are stored in a character map. 
 ---------------------------
