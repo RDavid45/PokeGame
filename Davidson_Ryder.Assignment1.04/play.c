@@ -9,6 +9,7 @@
 #include "MoveController.h"
 #include <assert.h>
 
+
 void showGameState(Map *m, CharacterMap *cmap);
 
 int main(int argc, char *argv[])
@@ -29,8 +30,16 @@ int main(int argc, char *argv[])
     placeCharacter(&cmap, &pc, m.map[m.vPos][m.hPos]->centerX, m.map[m.vPos][m.hPos]->centerY);
     Move move = {.c = &pc, .dx = 1, .dy = 1, .when = 0};
     scheduleMove(&mq, &move);
-    if (argc > 1){
-        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, atoi(argv[1]));
+    int npcs = -1;
+    for (int i = 0; i < argc - 1; i++){
+        if (strcmp(argv[i], "--numtrainers") == 0 && i + 1 < argc){
+            npcs = atoi(argv[i + 1]);
+            break;
+        }
+    }
+
+    if (npcs > -1){
+        spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, npcs);
     } else {
         spawnNPCs(&cmap, &mq, m.map[m.vPos][m.hPos], &c, 10);
     }
