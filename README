@@ -34,3 +34,15 @@ printCosts(MovementCosts *c) - prints the costs of each tile for each NPC type
 Uses Dijkstras to calculate the min cost per tile. Dijkstras uses a generic heap that holds costNodes 
 to find min.
 ---------------------------
+Assignment 1.04 - NPC movement
+---------------------------
+NPCs have 6 different logic types for movement:
+1. wanderer - moves in a straight line until it hits the edge of the terrain then it picks a new direction
+2. hiker - moves towards the player using the hiker movement costs
+3. rival - moves towards the player using the rival movement costs
+4. pacer - moves back and forth in a straight line between until it hits impassable terrain then it turns around
+5. sentry - does not move
+6. explorer - moves in a straight line until it hits impassable terrain then it picks a new direction
+every NPC has a next move that is stored in the movement controller and is updated every time they move.
+The movement controller has a performs each move then selects the next move for each NPC
+---------------------------
