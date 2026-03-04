@@ -8,6 +8,7 @@
 #include "CharacterMap.h"
 #include "MoveController.h"
 #include <assert.h>
+#include <string.h>
 
 
 void showGameState(Map *m, CharacterMap *cmap);
