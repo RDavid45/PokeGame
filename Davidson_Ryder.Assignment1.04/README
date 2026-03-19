@@ -7,6 +7,8 @@ to run:
 ---------------------------
 Known issues - due to the randomness of how buildings are generated it is possible that a pokemart and center will
 will try to be placed on the same section and if there is not enough space for both the center will be prioritized.
+NPCs can get stuck on eachother if they are trying to move into eachother, this is because they are set to move until
+they hit impassible terrain, and other NPCs are not considered impassable.
 ---------------------------
 Assignment 1.01 - Pokemon board Generation.
 ---------------------------
