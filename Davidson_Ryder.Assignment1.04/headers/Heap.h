@@ -64,7 +64,7 @@ int heapPop(Heap *h, void *item);
  * @note Ensure @p i is within the current bounds of the heap.
  *       This function does not validate that @p removed is non-NULL; passing NULL may cause damage.
  */
-int heapDelete(Heap *h, void *removed, int i);
+int heapDelete(Heap *h, void *removed, size_t i);
 
 /**
  * Copies the root element (top of the heap) into @p min without removing it.

@@ -1,6 +1,7 @@
 #include "MoveController.h"
 #include <limits.h>
 #include <stdlib.h>
+#include <ncurses.h>
 
 #define INF 100000
 
@@ -258,6 +259,11 @@ static inline int destWeightFor(const MoveController *mq, const Character *ch, i
     }
 }
 
+void handleBattle(Character *npc){
+    mvprintw(22, 0, "%s (%d, %d)", "Trainer Defeated at", npc->hPos, npc->vPos);
+    npc->npct = SentinalLogic;
+}
+
 int handleMove(MoveController *moves, Move *m) {
     Character *ch = m->c;
 
@@ -275,6 +281,11 @@ int handleMove(MoveController *moves, Move *m) {
 
     
     if (moves->cmap->cmap[nRow][nCol] != NULL) {
+        if (moves->cmap->cmap[nRow][nCol]->npct == TrainerLogic){
+            handleBattle(ch);
+        } else if (ch->npct == TrainerLogic){
+            handleBattle(moves->cmap->cmap[nRow][nCol]);
+        }
         if (ch->npct != TrainerLogic){
         scheduleNextMove(moves, m);
     }

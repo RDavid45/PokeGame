@@ -12,9 +12,9 @@ int ArrayListinit(ArrayList *a, size_t objectSize){
     a->data = malloc(a->oSize * a->max);
     return 0;
 }
-int ArrayListget(ArrayList *a, void* item, int i)
+int ArrayListget(ArrayList *a, void* item, size_t i)
 {
-    if (!a || i > a->aSize -1 || i < 0){
+    if (!a || i > a->aSize -1){
         return -1;
     }
     memcpy(item, (char*)a->data + (i) * a->oSize, a->oSize);
@@ -29,9 +29,9 @@ int ArrayListpop(ArrayList *a, void *removed)
     a->aSize--;
     return 0;
 }
-int ArrayListinsert(ArrayList *a,  void *item, int i)
+int ArrayListinsert(ArrayList *a,  void *item, size_t i)
 {
-    if(!a || !item || i > a->aSize || i < 0){
+    if(!a || !item || i > a->aSize){
         return -1;
     }
     if (a->aSize + 1 > a->max){
@@ -42,9 +42,9 @@ int ArrayListinsert(ArrayList *a,  void *item, int i)
     a->aSize++;
     return 0;
 }
-int ArrayListswap(ArrayList *a, int i, int j)
+int ArrayListswap(ArrayList *a, size_t i, size_t j)
 {
-    if (i < 0 || i > a->aSize -1 || j < 0 || j > a->aSize -1){
+    if (i > a->aSize -1 || j > a->aSize -1){
         return -1;
     }
     void *temp = malloc(a->oSize);
@@ -65,7 +65,7 @@ int ArrayListadd(ArrayList *a, void *item)
     a->aSize++;
     return 0;
 }
-int ArrayListremove(ArrayList *a, int i, void*removed)
+int ArrayListremove(ArrayList *a, size_t i, void*removed)
 {
     if (a->aSize <= 0){
         return -1;

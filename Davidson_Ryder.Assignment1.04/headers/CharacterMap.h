@@ -21,6 +21,6 @@ int initCharacterMap(CharacterMap *c);
 
 int placeCharacter(CharacterMap *cmap, Character *c, int hPos, int vPos);
 
-SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, MovementCosts *mc, int count);
+SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, int count);
 
 #endif

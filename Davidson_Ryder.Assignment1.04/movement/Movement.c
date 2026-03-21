@@ -11,7 +11,6 @@ typedef struct costNode {
     int cost;
 } costNode;
 
-int findCost(char c, type t);
 void resetCosts(MovementCosts *c, const Board *b);
 int costsCompare(const void *c1, const void *c2);
 int checkValidPos(int row, int col);

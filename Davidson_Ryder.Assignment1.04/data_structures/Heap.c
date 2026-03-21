@@ -5,7 +5,7 @@
 #define AT(h, k) ((void *)((char *) (h)->heap->data + (size_t)(k) * (h)->heap->oSize))
 
 int heapifyDown(Heap *h, int i);
-int heapifyUp(Heap *h, int i);
+int heapifyUp(Heap *h, size_t i);
 
 
 int initHeap(Heap *h, int (*compare)(const void *p1, const void *p2), size_t oSize)
@@ -44,9 +44,9 @@ int heapPop(Heap *h, void *item)
     
 }
 
-int heapDelete(Heap *h, void *removed, int i)
+int heapDelete(Heap *h, void *removed, size_t i)
 {
-    if (i > h->heap->aSize -1 || i < 0){
+    if (i > h->heap->aSize -1){
         return -1;
     }
     ArrayListswap(h->heap, i, h->heap->aSize - 1);
@@ -100,13 +100,11 @@ int heapifyDown(Heap *h, int i)
     return 0;
 }
 
-int heapifyUp(Heap *h, int i)
+int heapifyUp(Heap *h, size_t i)
 {
     int parent;
 
     if (i >= h->heap->aSize){
-        return -1;
-    } else if (i < 0){
         return -1;
     } else if (i == 0){
         return 0;

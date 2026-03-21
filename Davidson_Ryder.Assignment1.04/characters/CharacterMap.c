@@ -52,14 +52,14 @@ static type costCategoryFor(characterType t) {
 
 static int isOccupied(const CharacterMap *cmap,int r, int c) {return cmap->cmap[r][c] != NULL;}
 
-static int canSpawn(const CharacterMap *cm, Board *b, const MovementCosts *mc, type npc, int r, int c) {
+static int canSpawn(const CharacterMap *cm, Board *b, type npc, int r, int c) {
     if (isOccupied(cm, r, c)) return 0;
     if (findCost(b->board[r][c], npc) >= INF) return 0;
     return 1;
 }
 
 
-SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, MovementCosts *mc, int count){
+SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, int count){
     SpawnResult sr = { .requested = count, .placed = 0, .failed_attempts = 0 };
 
     int max_attempts = count * 50;
@@ -78,7 +78,7 @@ SpawnResult spawnNPCs(CharacterMap *cmap, MoveController *mq, Board *b, Movement
             npc = randomBehavior();
             cc = costCategoryFor(npc); 
         }
-        if (!canSpawn(cmap, b, mc, cc, r, c)) { sr.failed_attempts++; continue; }
+        if (!canSpawn(cmap, b, cc, r, c)) { sr.failed_attempts++; continue; }
 
         Character *ch = (Character*)malloc(sizeof(*ch));
         if (!ch) break;

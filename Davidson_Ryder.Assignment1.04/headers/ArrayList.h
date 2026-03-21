@@ -33,7 +33,7 @@ int ArrayListinit(ArrayList *a, size_t objectSize);
  * @note This function does not validate that @p item is non-NULL; passing NULL
  *       may cause damage. Make sure @p item is valid.
  */
-int ArrayListget(ArrayList *a,  void *item, int i);
+int ArrayListget(ArrayList *a,  void *item, size_t i);
 
 /**
  * Removes the last element in the ArrayList and copies it into the memory
@@ -61,7 +61,7 @@ int ArrayListpop(ArrayList *a, void *removed);
  * @note This function does not validate that @p item is non-NULL; passing NULL
  *       may cause damage. Make sure @p item is valid.
  */
-int ArrayListinsert(ArrayList *a,  void *item, int i);
+int ArrayListinsert(ArrayList *a,  void *item, size_t i);
 
 /**
  * Swaps the elements at indices @p i and @p j.
@@ -73,7 +73,7 @@ int ArrayListinsert(ArrayList *a,  void *item, int i);
  *
  * @note Both @p i and @p j must be valid indices (0 <= index < a->aSize).
  */
-int ArrayListswap(ArrayList *a, int i, int j);
+int ArrayListswap(ArrayList *a, size_t i, size_t j);
 
 /**
  * Appends an element to the end of the ArrayList. Grows array if needed. Increases aSize by 1.
@@ -102,7 +102,7 @@ int ArrayListadd(ArrayList *a, void *item);
  * @note This function does not validate that @p removed is non-NULL; passing NULL
  *       may cause damage. Make sure @p removed is valid. Also ensure @p i is within bounds.
  */
-int ArrayListremove(ArrayList *a, int i, void*removed);
+int ArrayListremove(ArrayList *a, size_t i, void*removed);
 
 /**
  * Frees the memory used by the ArrayList's internal storage.

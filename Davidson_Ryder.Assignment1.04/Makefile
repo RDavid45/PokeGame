@@ -1,41 +1,53 @@
-play: Board.o Map.o SeedQueue.o play.o Movement.o MoveController.o Heap.o ArrayList.o Character.o CharacterMap.o
-	gcc Board.o Map.o SeedQueue.o play.o Movement.o MoveController.o Heap.o ArrayList.o Character.o CharacterMap.o -o play
+# === Compiler + Flags ===
+CC      := gcc
+CFLAGS  := -Wall -Wextra -Werror -g -Iheaders 
+LDFLAGS :=
+LDLIBS  := 
 
-play.o: play.c headers/Map.h headers/Movement.h
-	gcc -Iheaders play.c -Wall -Werror -g -c
+NCURSES_CFLAGS := $(shell pkg-config --cflags ncursesw 2>/dev/null)
+NCURSES_LIBS   := $(shell pkg-config --libs ncursesw 2>/dev/null)
 
-board: Board.o genBoard.o SeedQueue.o
-	gcc Board.o genBoard.o SeedQueue.o -o board
+CFLAGS  += $(NCURSES_CFLAGS)
+LDLIBS  += $(NCURSES_LIBS)
 
-SeedQueue.o: data_structures/SeedQueue.c headers/SeedQueue.h
-	gcc -Iheaders data_structures/SeedQueue.c -Wall -Werror -g -c
+# === Sources ===
+SRCS_PLAY := \
+    display/Board.c \
+    display/Map.c \
+	display/Colors.c \
+    data_structures/SeedQueue.c \
+    movement/Movement.c \
+    movement/MoveController.c \
+    data_structures/Heap.c \
+    data_structures/ArrayList.c \
+    characters/Character.c \
+    characters/CharacterMap.c \
+    play.c
 
-Character.o: characters/Character.c headers/Character.h headers/Movement.h
-	gcc -Iheaders characters/Character.c -Wall -Werror -g -c
+#SRCS_BOARD := \
+    display/Board.c \
+    display/genBoard.c \
+    data_structures/SeedQueue.c
 
-CharacterMap.o: characters/CharacterMap.c headers/CharacterMap.h headers/Character.h
-	gcc -Iheaders characters/CharacterMap.c -Wall -Werror -g -c
+OBJS_PLAY  := $(SRCS_PLAY:.c=.o)
+#OBJS_BOARD := $(SRCS_BOARD:.c=.o)
 
-Board.o: display/Board.c headers/Board.h headers/SeedQueue.h
-	gcc -Iheaders display/Board.c -Wall -Werror -g -c
+# === Default target ===
+.PHONY: all
+all: play #board
 
-Map.o: display/Map.c headers/Map.h headers/Board.h headers/Character.h headers/CharacterMap.h
-	gcc -Iheaders display/Map.c -Wall -Werror -g -c
+# === Link targets ===
+play: $(OBJS_PLAY)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-genBoard.o: display/genBoard.c headers/Board.h
-	gcc -Iheaders display/genBoard.c -Wall -Werror -g -c
+#board: $(OBJS_BOARD)
+#	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-ArrayList.o: data_structures/ArrayList.c headers/ArrayList.h
-	gcc -Iheaders data_structures/ArrayList.c -Wall -Werror -g -c
+# === Pattern rule for all .c -> .o (applies CFLAGS with -Iheaders) ===
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-Heap.o: data_structures/Heap.c headers/Heap.h headers/ArrayList.h
-	gcc -Iheaders data_structures/Heap.c -Wall -Werror -g -c
-
-Movement.o: movement/Movement.c headers/Movement.h headers/Heap.h
-	gcc -Iheaders movement/Movement.c -Wall -Werror -g -c
-
-MoveController.o: movement/MoveController.c headers/MoveController.h headers/Movement.h headers/CharacterMap.h
-	gcc -Iheaders movement/MoveController.c -Wall -Werror -g -c
-
+# === Housekeeping ===
+.PHONY: clean
 clean:
-	rm -f *.o board *~ play
+	rm -f $(OBJS_PLAY) $(OBJS_BOARD) play board *~ core
