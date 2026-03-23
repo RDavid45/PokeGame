@@ -281,9 +281,9 @@ int handleMove(MoveController *moves, Move *m) {
 
     
     if (moves->cmap->cmap[nRow][nCol] != NULL) {
-        if (moves->cmap->cmap[nRow][nCol]->npct == TrainerLogic){
+        if (moves->cmap->cmap[nRow][nCol]->npct == TrainerLogic && ch->npct != TrainerLogic){
             handleBattle(ch);
-        } else if (ch->npct == TrainerLogic){
+        } else if (ch->npct == TrainerLogic && !(m->dy == 0 && m->dx ==0)){
             handleBattle(moves->cmap->cmap[nRow][nCol]);
         }
         if (ch->npct != TrainerLogic){

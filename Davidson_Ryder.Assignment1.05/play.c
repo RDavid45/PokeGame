@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
         heapPop(mq.h, &move);
         handleMove(&mq, &move);
         showGameState(&m, &cmap);
-        if (move.c->t == Trainer){
+        if (move.c->npct == TrainerLogic){
             while (invalid){
                 key =getch();
                 switch (key) {
@@ -153,9 +153,11 @@ int main(int argc, char *argv[]){
                 case '.': {
                     move.dx = 0;
                     move.dy = 0;
-                    move.when += c.trainer[pc.vPos][pc.hPos].weight;
-                    scheduleMove(&mq, &move);
-                    invalid =0;
+                    if (c.trainer[pc.vPos + move.dy][pc.hPos + move.dx].weight < 100){    
+                        move.when += c.trainer[pc.vPos + move.dy][pc.hPos + move.dx].weight;
+                        scheduleMove(&mq, &move);
+                        invalid =0;
+                    }
                     break;
                     }
                 case 't': {

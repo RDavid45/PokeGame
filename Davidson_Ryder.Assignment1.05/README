@@ -5,10 +5,27 @@ to run:
     make
     ./play
 ---------------------------
-Known issues - due to the randomness of how buildings are generated it is possible that a pokemart and center will
-will try to be placed on the same section and if there is not enough space for both the center will be prioritized.
-NPCs can get stuck on eachother if they are trying to move into eachother, this is because they are set to move until
-they hit impassible terrain, and other NPCs are not considered impassable.
+controls:
+    movement:
+        h -> move player 1 tile left
+        j -> move player 1 tile down
+        k -> move player 1 tile up
+        l -> move player 1 tile right
+        y -> move player 1 tile up and 1 tile left
+        u -> move player 1 tile up and 1 tile right
+        n -> move player 1 tile down and 1 tile right
+        b -> move player 1 tile down and 1 tile left
+    other:
+        t -> bring up trainers screen
+        ESC -> leave trainers screen
+        Q -> quit the game
+        UP -> scroll up on trainers screen
+        DOWN -> scroll down on trainers screen
+        LEFT -> leave the pokemon center
+        RIGHT -> enter the pokemon center (must be on a pokemon center 'c')
+---------------------------
+Known issues - NPCs can get stuck on eachother if they are trying to move into eachother, this is because they are set to move until
+they hit impassible terrain, and other NPCs are not considered impassable. 
 ---------------------------
 Assignment 1.01 - Pokemon board Generation.
 ---------------------------
@@ -49,3 +66,8 @@ Every NPC has a next move that is stored in the movement controller and is updat
 The movement controller has a performs each move then selects the next move for each NPC.
 The movement controller is logically a heap, and characters are stored in a character map. 
 ---------------------------
+Assignment 1.05 - Player Movement & game window
+--------------------------
+The game now has a "window" that it runs in, this us done through the usage of ncurses.
+Also from ncurses the game can read user inputs to control their character.
+When a character runs into an npc the initiate a battle, in which the NPC auto loses and becomes stationary. (this is able to block gates)
