@@ -1,141 +1,112 @@
-#include <stddef.h>
-
 #ifndef ARRAYLIST_H
 #define ARRAYLIST_H
 
-typedef struct ArrayList
+#include <cstddef>
+#include <stdexcept>
+
+template <typename T>
+class ArrayList
 {
-    void *data;
-    size_t oSize;
-    size_t aSize;
-    size_t max;
-} ArrayList;
+private:
+    T* data;
+    size_t size_;
+    size_t capacity_;
 
-/**
- * Reserves a place in memory for the array that can hold 4 objects.
- *  Sets aSize to 0 and oSize to @p objectSize
- * 
- * @param a pointer to the ArrayList that you want to initialize
- * @param objectSize size of the objects being stored in bytes;
- * @return 0 on success; -1 on failure
- */
-int ArrayListinit(ArrayList *a, size_t objectSize);
+    void grow()
+    {
+        size_t newCap = capacity_ * 2;
+        T* newData = new T[newCap];
 
-/**
- * Retrieves the element at index i and copies it into the memory pointed to by @p item.
- * The index is zero-based.
- *
- * @param a pointer to the ArrayList
- * @param item pointer to a buffer with at least oSize bytes where the element will be copied to
- * @param i zero-based index of the element to retrieve (0 <= i < a->aSize)
- * @return 0 on success; -1 on failure
- * 
- * @note This function does not validate that @p item is non-NULL; passing NULL
- *       may cause damage. Make sure @p item is valid.
- */
-int ArrayListget(ArrayList *a,  void *item, size_t i);
+        for (size_t i = 0; i < size_; ++i)
+            newData[i] = data[i];
 
-/**
- * Removes the last element in the ArrayList and copies it into the memory
- * pointed to by @p removed. Decreases aSize by 1.
- *
- * @param a pointer to the ArrayList
- * @param removed pointer to a buffer with at least oSize bytes where the
- *        removed element will be copied to
- * @return 0 on success; -1 on failure
- *
- * @note This function does not validate that @p removed is non-NULL; passing NULL
- *       may cause damage. Make sure @p removed is valid.
- */
-int ArrayListpop(ArrayList *a, void *removed);
+        delete[] data;
+        data = newData;
+        capacity_ = newCap;
+    }
 
-/**
- * Inserts an element at index @p i, shifting existing elements at and after @p i
- * one position to the right. Grows the array if needed. Increases aSize by 1.
- *
- * @param a pointer to the ArrayList
- * @param item pointer to a buffer with at least oSize bytes holding the element to insert
- * @param i zero-based position at which to insert (0 <= i <= a->aSize)
- * @return 0 on success; -1 on failure
- *
- * @note This function does not validate that @p item is non-NULL; passing NULL
- *       may cause damage. Make sure @p item is valid.
- */
-int ArrayListinsert(ArrayList *a,  void *item, size_t i);
+public:
+    ArrayList()
+        : data(new T[4]), size_(0), capacity_(4)
+    {
+    }
 
-/**
- * Swaps the elements at indices @p i and @p j.
- *
- * @param a pointer to the ArrayList
- * @param i zero-based index of the first element to swap
- * @param j zero-based index of the second element to swap
- * @return 0 on success; -1 on failure
- *
- * @note Both @p i and @p j must be valid indices (0 <= index < a->aSize).
- */
-int ArrayListswap(ArrayList *a, size_t i, size_t j);
+    ~ArrayList()
+    {
+        delete[] data;
+    }
 
-/**
- * Appends an element to the end of the ArrayList. Grows array if needed. Increases aSize by 1.
- *
- * @param a pointer to the ArrayList
- * @param item pointer to a buffer with at least oSize bytes holding the element to append
- * @return 0 on success; -1 on failure
- *
- * @note This function does not validate that @p item is non-NULL; passing NULL
- *       may cause damage. Make sure @p item is valid.
- * @note this function does not make sure that item is the same type as everything else.
- */
-int ArrayListadd(ArrayList *a, void *item);
+    T& operator[](size_t i)
+    {
+        return data[i];
+    }
 
-/**
- * Removes the element at index @p i and copies it into the memory pointed to by
- * @p removed.
- * Shifts subsequent elements left by one position and decreases aSize by 1.
- *
- * @param a pointer to the ArrayList
- * @param i zero-based index of the element to remove (0 <= i < a->aSize)
- * @param removed pointer to a buffer with at least oSize bytes where the removed
- *        element will be copied to
- * @return 0 on success; -1 on failure
- *
- * @note This function does not validate that @p removed is non-NULL; passing NULL
- *       may cause damage. Make sure @p removed is valid. Also ensure @p i is within bounds.
- */
-int ArrayListremove(ArrayList *a, size_t i, void*removed);
+    const T& operator[](size_t i) const
+    {
+        return data[i];
+    }
 
-/**
- * Frees the memory used by the ArrayList's internal storage.
- * Does not free the ArrayList struct itself and does not reset fields.
- *
- * @param a pointer to the ArrayList
- * @return 0 on success; -1 on failure
- *
- * @note This function assumes @p a is non-NULL. Passing NULL is undefined behavior.
- */
+    T get(size_t i) const
+    {
+        if (i >= size_)
+            throw std::out_of_range("ArrayList::get");
+        return data[i];
+    }
 
-int ArrayListdestroy(ArrayList *a);
+    T pop()
+    {
+        if (size_ == 0)
+            throw std::out_of_range("ArrayList::pop");
+        return data[--size_];
+    }
 
-/**
- * Grows the capacity of the underlying array to accommodate more elements.
- * Doubles the current max capacity and preserves existing elements.
- *
- * @param a pointer to the ArrayList
- * @return 0 on success; -1 on failure (e.g., allocation fails)
- *
- * @note On success, both @p a->data and @p a->max are updated. On failure,
- *       the original data pointer and capacity remain unchanged.
- */
-int growArrayList(ArrayList *a);
+    void add(const T& item)
+    {
+        if (size_ == capacity_)
+            grow();
+        data[size_++] = item;
+    }
 
-/**
- * gets how many elements are in the array @p a
- * 
- * @param a pointer to an ArrayList
- * @return num elements in the array
- */
-int arraySize(ArrayList *a);
+    void insert(const T& item, size_t i)
+    {
+        if (i > size_)
+            throw std::out_of_range("ArrayList::insert");
 
+        if (size_ == capacity_)
+            grow();
 
+        for (size_t j = size_; j > i; j--)
+            data[j] = data[j - 1];
+
+        data[i] = item;
+        size_++;
+    }
+
+    void swap(size_t i, size_t j)
+    {
+        if (i >= size_ || j >= size_)
+            throw std::out_of_range("ArrayList::swap");
+
+        T temp = data[i];
+        data[i] = data[j];
+        data[j] = temp;
+    }
+
+    T remove(size_t i)
+    {
+        if (i >= size_)
+            throw std::out_of_range("ArrayList::remove");
+
+        for (size_t j = i; j + 1 < size_; j++)
+            data[j] = data[j + 1];
+
+        return pop();
+    }
+
+    size_t size() const
+    {
+        return size_;
+    }
+};
 
 #endif
