@@ -1,29 +1,37 @@
-#include "Movement.h"
-
-
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-typedef enum characterType {
-    HikerLogic = 0x01,
-    RivalLogic = 0x02,
-    TrainerLogic = 0x04,
-    WandererLogic = 0x08,
-    SentinalLogic = 0x10,
-    ExplorerLogic = 0x20,
-    PacerLogic = 0x40,
-} characterType;
+#include "Movement.h"
 
-typedef struct Character{
+enum class CharacterType {
+    TrainerLogic  = 0x00,
+    HikerLogic    = 0x01,
+    RivalLogic    = 0x02,
+    WandererLogic = 0x04,
+    SentinelLogic = 0x08,
+    ExplorerLogic = 0x10,
+    PacerLogic    = 0x20
+};
+
+class Character {
+private:
     char icon;
-    characterType npct;
-    type t;
+    type movementType;
+    CharacterType npcType;
     int vPos;
     int hPos;
-} Character;
 
-int initCharacter(Character *c, char icon, characterType npct, type t);
-int getvPos(Character *c);
-int gethPos(Character *c);
+public:
+    Character(char icon, CharacterType npcType, type movementType);
+    ~Character() = default;
 
-#endif
+    char getIcon() const;
+    type getType() const;
+    CharacterType getNPCType() const;
+    bool isNPC() const;
+    int getVPos() const;
+    int getHPos() const;
+    void setPosition(int vPos, int hPos);
+};
+
+#endif // CHARACTER_H
