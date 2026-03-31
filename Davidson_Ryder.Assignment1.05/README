@@ -16,6 +16,7 @@ controls:
         n -> move player 1 tile down and 1 tile right
         b -> move player 1 tile down and 1 tile left
     other:
+        f (x y) -> fly to the target chunk.
         t -> bring up trainers screen
         ESC -> leave trainers screen
         Q -> quit the game
@@ -71,3 +72,9 @@ Assignment 1.05 - Player Movement & game window
 The game now has a "window" that it runs in, this us done through the usage of ncurses.
 Also from ncurses the game can read user inputs to control their character.
 When a character runs into an npc the initiate a battle, in which the NPC auto loses and becomes stationary. (this is able to block gates)
+--------------------------
+Assignment 1.06 - Map Traversal + rewrite
+--------------------------
+codebase is now in c++
+you are able to move to different chunks and make on the ground via the roads or through the skys via the fly command.
+all chunks have 10 NPC with the intention of giving them better/more mons as you get further from the center.
