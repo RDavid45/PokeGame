@@ -1,35 +1,54 @@
+#pragma once
+
 #include "Board.h"
 
-#ifndef MOVEMENT_H
-#define MOVEMENT_H
-
-typedef enum type {
+enum class Type {
     Hiker,
     Rival,
     Trainer,
     Swimmer,
     Other
-}type;
+};
 
-typedef struct cost{
+
+struct Cost {
     int cost;
     int weight;
     int row;
     int col;
-} cost;
+};
 
-typedef struct costs{
-    cost hiker[21][80];
-    cost rival[21][80];
-    cost trainer[21][80];
-    cost swimmer[21][80];
-    cost other[21][80];
-} MovementCosts;
+class MovementCosts {
+public:
+    static constexpr int INF = 1000000;
+    explicit MovementCosts(const Board& board);
 
-int initCosts(MovementCosts *c, const Board *b);
-void updateCosts(MovementCosts *c, const Board *b, int row, int col);
-int findCost(char c, type t);
-void printCosts(MovementCosts *c);
+    void updateCosts(const Board& board, int row, int col);
 
+    const Cost& hikerAt(int row, int col) const;
+    const Cost& rivalAt(int row, int col) const;
+    const Cost& trainerAt(int row, int col) const;
+    const Cost& swimmerAt(int row, int col) const;
+    const Cost& otherAt(int row, int col) const;
 
-#endif
+    void printCosts() const;
+
+private:
+
+    Cost hiker[21][80];
+    Cost rival[21][80];
+    Cost trainer[21][80];
+    Cost swimmer[21][80];
+    Cost other[21][80];
+
+    void resetCosts(const Board& board);
+
+    void hikerCosts(int row, int col);
+    void rivalCosts(int row, int col);
+    void trainerCosts(int row, int col);
+    void swimmerCosts(int row, int col);
+    void otherCosts(int row, int col);
+
+    static int findCost(char terrain, Type t);
+    static bool checkValidPos(int row, int col);
+};

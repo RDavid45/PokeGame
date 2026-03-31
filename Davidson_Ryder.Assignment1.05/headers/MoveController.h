@@ -1,36 +1,35 @@
+#ifndef MOVECONTROLLER_H
+#define MOVECONTROLLER_H
+
+#include "Board.h"
+#include "Movement.h"
 #include "Character.h"
 #include "CharacterMap.h"
-#include "Movement.h"
-#include "Board.h"
 #include "Heap.h"
+#include "Move.h"
 
-#ifndef MoveController_H
-#define MoveController_H
+class MoveController
+{
+public:
+    MoveController(Board& b,
+                   MovementCosts& mc,
+                   CharacterMap& cmap);
 
-typedef struct moves{
-    Character *c;
-    int dy;
-    int dx;
-    int when;
-} Move;
+    ~MoveController();
 
-typedef struct MoveController {
-    Board *b;
-    MovementCosts *costs;
-    Heap *h;
-    CharacterMap *cmap;
-} MoveController;
+    int scheduleMove(const Move& m);
+    int handleMove(Move& m);
+    Move getNextMove();
 
-int moveCompare(const void *v1, const void *v2);
+private:
+    Board& b;
+    MovementCosts& costs;
+    CharacterMap& cmap;
+    Heap<Move>* heap;
 
-int scheduleMove(MoveController *moves, Move *m);
-
-int initMoveController(MoveController *moves, Board *b, MovementCosts *mc, CharacterMap *cmap);
-
-int handleMove(MoveController *mq, Move *m);
-
-int updateBoard(MoveController *moves, Board *b);
-
-
+    static inline bool inBounds(int r, int c);
+    int scheduleNextMove(Move& m);
+    int findNextDirection(int r, int c) const;
+};
 
 #endif

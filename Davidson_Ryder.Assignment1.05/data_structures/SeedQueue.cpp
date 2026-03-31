@@ -1,23 +1,24 @@
 #include "SeedQueue.h"
 #include <stdexcept>
 
-SeedQueue(){
+SeedQueue::SeedQueue(){
     front = nullptr;
     back = nullptr;
-    size = 0;
+    this->size = 0;
 }
 
-~SeedQueue(){
+SeedQueue::~SeedQueue(){
     clear();
 }
 
-void clear(){
+void SeedQueue::clear(){
     while (!isEmpty()){
         dequeue();
     }
+    size = 0;
 }
 
-void enqueue(int x, int y, char c){
+void SeedQueue::enqueue(int x, int y, char c){
     Seed *newseed = new Seed(x, y, c);
     if (size > 0) {
         back->next = newseed;
@@ -25,19 +26,16 @@ void enqueue(int x, int y, char c){
     } else {
         front = back = newseed;
     }
+    size++;
 }
 
-Seed dequeue(){
+SeedQueue::Seed *SeedQueue::dequeue(){
     if (size <= 0){
         throw std::runtime_error("Queue is empty");
     }
     Seed *temp = front;
     
-    Seed value;
-    value.x = temp->x;
-    value.y = temp->y;
-    value.chr = temp->chr;
-    value.next = nullptr;
+    Seed *value = new Seed(temp->x, temp->y, temp->chr);
 
     front = front->next;
     if (!front) {
@@ -49,14 +47,14 @@ Seed dequeue(){
     return value;
 }
 
-Seed peek() const{
-    return *front;
+const SeedQueue::Seed *SeedQueue::peek() const{
+    return front;
 }
 
-int size() const{
+int SeedQueue::getSize() const{
     return size;
 }
 
-bool isEmpty() const{
-    return front = back = nullptr;
+bool SeedQueue::isEmpty() const{
+    return back == nullptr;
 }

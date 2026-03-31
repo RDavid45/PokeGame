@@ -1,7 +1,12 @@
-class Comparable
-{
-public:
-    virtual ~Comparable() {}
+#ifndef COMPARABLE_H
+#define COMPARABLE_H
 
-    virtual int compareTo(const Comparable &other) const = 0;
+template <typename T>
+class Comparable{
+    public:
+        virtual ~Comparable() = default;
+
+        virtual int compareTo(const T item) const = 0;
 };
+
+#endif

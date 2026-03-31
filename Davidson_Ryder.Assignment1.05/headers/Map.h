@@ -1,26 +1,30 @@
-#include "Board.h"
-#include "Character.h"
-
 #ifndef MAP_H
 #define MAP_H
 
-typedef struct Map 
+#include "Chunk.h"
+
+class Map
 {
-    Board *map[401][401];
+private:
+    static const int MAP_SIZE = 401;
+    static const int CENTER   = 200;
+
+    Chunk* map[MAP_SIZE][MAP_SIZE];
     int vPos;
     int hPos;
-} Map;
 
-int initMap(Map *m);
-int printScreen(Map *m, Character *c);
-int moveNorth(Map *m);
-int moveSouth(Map *m);
-int moveEast(Map *m);
-int moveWest(Map *m);
-int fly(Map *m, int x, int y);
+    void createChunkIfMissing();
 
-int destroyMap(Map *m);
+public:
+    Map();
+    ~Map();
 
-
+    void moveNorth();
+    void moveSouth();
+    void moveEast();
+    void moveWest();
+    void fly(int x, int y);
+    Chunk *getChunk();
+};
 
 #endif

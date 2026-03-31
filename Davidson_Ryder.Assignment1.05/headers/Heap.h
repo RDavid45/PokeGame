@@ -45,7 +45,7 @@ class Heap
             }
         }
     public:
-        Heap(){ heap = new ArrayList<>(); }
+        Heap(){ heap = new ArrayList<T>(); }
 
         //Heap(const ArrayList &a){}
 
@@ -60,18 +60,26 @@ class Heap
         }
 
         T pop(){
-            return heap->remove(0);
+            return remove(0);
         }
 
-        void add(T item){
+        void add(const T& item){
             heap->add(item);
-            heapifyUP(heap->size() -1);
+            heapifyUp(heap->size() -1);
         }
 
-        T remove(size_t i){
-            heap->swap(heap->size() -1, i);
-            heapifyDown(i);
-            return heap->pop();
+        T remove(size_t i) {
+            T removed = heap->get(i);
+
+            heap->swap(i, heap->size() - 1);
+            heap->pop(); // remove last
+
+            if (i < heap->size()) {
+                heapifyDown(i);
+                heapifyUp(i);
+            }
+
+            return removed;
         }
 };
 

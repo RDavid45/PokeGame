@@ -15,7 +15,7 @@ private:
 
         Seed(int xVal, int yVal, char c)
             : x(xVal), y(yVal), chr(c), next(nullptr) {}
-        };
+    };
 
     Seed* front;
     Seed* back;
@@ -30,11 +30,11 @@ public:
 
     void enqueue(int x, int y, char c);
 
-    Seed *dequeue();
+    struct Seed *dequeue();
 
-    Seed *peek() const;
+    const struct Seed *peek() const;
 
-    int size() const;
+    int getSize() const;
 
     bool isEmpty() const;
 };
