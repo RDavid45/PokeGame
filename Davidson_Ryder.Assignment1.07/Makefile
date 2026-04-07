@@ -20,8 +20,10 @@ SRCS_PLAY := \
     movement/Movement.cpp \
     movement/MoveController.cpp \
     movement/Move.cpp \
+    characters/Pokemon.cpp \
     characters/Character.cpp \
     characters/CharacterMap.cpp \
+    CSVReader.cpp \
     play.cpp
 
 OBJS_PLAY := $(SRCS_PLAY:.cpp=.o)

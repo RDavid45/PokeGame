@@ -78,3 +78,9 @@ Assignment 1.06 - Map Traversal + rewrite
 codebase is now in c++
 you are able to move to different chunks and make on the ground via the roads or through the skys via the fly command.
 all chunks have 10 NPC with the intention of giving them better/more mons as you get further from the center.
+--------------------------
+Assignment 1.07 - Pokemon parsing
+--------------------------
+if you use one of the flags { pokemon, moves, pokemon_moves, pokemon_species, experience, type_names, 
+pokemon_stats, stats, pokemon_types} it will parse that csvs and fill structs that will then be printed to the terminal.
+if ran with no flags it will run the game as normal.

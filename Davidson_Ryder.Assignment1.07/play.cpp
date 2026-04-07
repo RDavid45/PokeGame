@@ -1,4 +1,3 @@
-#include "Map.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -6,16 +5,81 @@
 #include <assert.h>
 #include <string.h>
 #include <ncurses.h>
+#include <iostream>
+#include "Map.h"
 #include "Colors.h"
+#include "CSVReader.h"
+#include "Pokemon.h"
 
-
-void showGameState(Map *m, CharacterMap *cmap);
-void handleCenter();
-void handleShowTrainers(Character *pc, CharacterMap *cmap);
 
 int main(int argc, char *argv[]){
-    (void)argc;
-    (void)argv;
+    
+    if (argc == 2) {
+        std::string command(argv[1]);
+        CSVReader reader;
+
+        if (command == "pokemon") {
+            auto data = reader.load_pokemon();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else if (command == "moves") {
+            auto data = reader.load_moves();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else if (command == "pokemon_moves") {
+            auto data = reader.load_pokemon_moves();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else if (command == "pokemon_species") {
+            auto data = reader.load_pokemon_species();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else if (command == "experience") {
+            auto data = reader.load_experience();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else if (command == "type_names") {
+            auto data = reader.load_type_names();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else if (command == "pokemon_stats") {
+            auto data = reader.load_pokemon_stats();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else if (command == "stats") {
+            auto data = reader.load_stats();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else if (command == "pokemon_types") {
+            auto data = reader.load_pokemon_types();
+            for (size_t i = 0; i < data.size(); i++) {
+                std::cout << data[i] << "\n";
+            }
+
+        } else {
+            std::cerr << "Invalid data set: " << command << std::endl;
+            return 1;
+        }
+
+        return 0;
+    }
+
     Colors::initTerminal();
     srand(time(NULL));
     Map *m = new Map();
