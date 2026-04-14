@@ -1,0 +1,51 @@
+Assignment 1.01
+----------------------------------------------------------------------------------------------
+1/29 8:12pm implimented cordQueue.h and .c to store the cords for seeding and growing terrain.
+1/29 11:40pm implimented board.h to store the generated terrain.
+1/31 2:26pm impimented all board gen for board.c and added colloring
+1/31 5:21pm created the make file for this project.
+----------------------------------------------------------------------------------------------
+Assignment 1.02
+----------------------------------------------------------------------------------------------
+2/8 1:53pm Created Map.h and .c and implimented init map(*m) function to generate the board in the middle
+2/8 11:18pm Added the movement methods and play.c
+2/9 2:51pm Constrained movement to the available boards for safety, change the building gen to altar dificutly and made the boards not generate roads if there is no gate on that side of the board.
+20/10 10:38am fix memory leak by destroying the map when done.
+----------------------------------------------------------------------------------------------
+Assignment 1.03
+----------------------------------------------------------------------------------------------
+2/12 2:57pm created and implimented ArrayList.h and .c
+2/15 2:17pm created and implimented Heap.h and .c
+2/15 6:18pm changed the boarder characters to -, \, /, and |
+2/15 11:27pm made Movement.h and .c and impimented everything but calculate costs for them.
+2/16 2:49pm implimented dijkstras to claculate movement costs of npcs
+----------------------------------------------------------------------------------------------
+Assignment 1.04
+----------------------------------------------------------------------------------------------
+2/26 11:18pm added costs for all other types of characters.
+3/1 9:07pm added MoveController and implimented the logic for all the npcs.
+3/1 11:28pm added CharacterMap and implimented spawning and adding to the move queue.
+3/2 9:24pm various bug fixes and improvements.
+3/4 2:49pm added the --numtrainers option to the command line and implimented the logic for it.
+----------------------------------------------------------------------------------------------
+Assignment 1.05
+----------------------------------------------------------------------------------------------
+Spring Break: added user inputs to move the player, npc's to auto lose battles on contact with the player, changed the rendering to using ncurses, and view nearby trainers screen with the ability to scroll through.
+----------------------------------------------------------------------------------------------
+Assignment 1.06
+----------------------------------------------------------------------------------------------
+3/29 9:53pm refactored all of the code base to be written in C++ (nothing
+works)
+3/30 6:56pm bug fixes and make file changes to get the program to the point it
+can do everything up through assignment 3.
+3/31 5:55pm readded map traversal and got the rest of the code working,
+decided to make it so each chunk has 10 npcs.
+----------------------------------------------------------------------------------------------
+Assignment 1.07
+----------------------------------------------------------------------------------------------
+4/6 10:03pm added file parsing a different stucts for each file entry type. Added << methods for each struct to print them to terminal
+----------------------------------------------------------------------------------------------
+Assignment 1.08
+----------------------------------------------------------------------------------------------
+4/14 6:35pm added pokemon generation and placing them inside npcs as well as changed the battle mecanics slightly.
+also better tracking of which npcs have been defeated.
