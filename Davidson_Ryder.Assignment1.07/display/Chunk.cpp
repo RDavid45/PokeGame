@@ -7,7 +7,7 @@
 
 Chunk::Chunk(int vPos, int hPos, int n, int s, int w, int e) : 
 board(vPos, hPos, n, s, w, e), costMap(board), characterMap(), playerMove() ,hPos(hPos), vPos(vPos), hasSpawned(false) {
-    controller = new MoveController(board, costMap,  characterMap);
+    controller = new MoveController(board, costMap,  characterMap, abs(vPos - 200) + abs(hPos - 200));
 
     
 }

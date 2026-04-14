@@ -20,7 +20,9 @@ SRCS_PLAY := \
     movement/Movement.cpp \
     movement/MoveController.cpp \
     movement/Move.cpp \
-    characters/Pokemon.cpp \
+    pokemon/Pokemon.cpp \
+    pokemon/PokemonFactory.cpp \
+    pokemon/Mon.cpp \
     characters/Character.cpp \
     characters/CharacterMap.cpp \
     CSVReader.cpp \

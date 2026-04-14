@@ -8,83 +8,89 @@
 #include <iostream>
 #include "Map.h"
 #include "Colors.h"
-#include "CSVReader.h"
+#include "PokemonFactory.h"
 #include "Pokemon.h"
+
+void chooseStarter(Character *pc) {
+  PokemonFactory *factory = PokemonFactory::getInstance();
+
+  // Generate three level-1 Pokémon
+  Mon *starters[3];
+  for (int i = 0; i < 3; i++) {
+    starters[i] = factory->generatePokemon(1);
+  }
+
+  clear();
+  mvprintw(0, 0, "Choose your starter Pokemon:");
+  mvprintw(1, 0, "--------------------------------");
+
+  for (int i = 0; i < 3; i++) {
+    Mon *m = starters[i];
+    int row = 3 + i * 6;
+
+    mvprintw(row, 0, "%d) %s  (Lv %d, %c)",
+             i + 1,
+             m->get_name().c_str(),
+             m->get_level(),
+             m->get_gender());
+
+    mvprintw(row + 1, 2, "HP: %d  Atk: %d  Def: %d",
+             m->get_hp(),
+             m->get_atk(),
+             m->get_def());
+
+    mvprintw(row + 2, 2, "SpA: %d  SpD: %d  Spe: %d",
+             m->get_satk(),
+             m->get_sdef(),
+             m->get_spd());
+
+    mvprintw(row + 3, 2, "Moves:");
+    for (int j = 0; j < (int) m->get_moves().size(); j++) {
+      mvprintw(row + 4 + j, 4, "- %s",
+               m->get_moves().get(j).name.c_str());
+    }
+  }
+
+  mvprintw(22, 0, "Press 1, 2, or 3 to choose your starter.");
+  refresh();
+
+  int choice = 0;
+  while (choice < '1' || choice > '3') {
+    choice = getch();
+  }
+
+  int picked = choice - '1';
+
+  // Give chosen Pokémon to the PC
+  pc->addMon(starters[picked]);
+
+  // Delete the unchosen Pokémon
+  for (int i = 0; i < 3; i++) {
+    if (i != picked) {
+      delete starters[i];
+      starters[i] = nullptr;
+    }
+  }
+
+  clear();
+  mvprintw(0, 0, "You chose %s!",
+           pc->getMon(0)->get_name().c_str());
+  mvprintw(2, 0, "Press any key to begin your adventure...");
+  refresh();
+  getch();
+}
 
 
 int main(int argc, char *argv[]){
-    
-    if (argc == 2) {
-        std::string command(argv[1]);
-        CSVReader reader;
-
-        if (command == "pokemon") {
-            auto data = reader.load_pokemon();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else if (command == "moves") {
-            auto data = reader.load_moves();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else if (command == "pokemon_moves") {
-            auto data = reader.load_pokemon_moves();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else if (command == "pokemon_species") {
-            auto data = reader.load_pokemon_species();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else if (command == "experience") {
-            auto data = reader.load_experience();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else if (command == "type_names") {
-            auto data = reader.load_type_names();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else if (command == "pokemon_stats") {
-            auto data = reader.load_pokemon_stats();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else if (command == "stats") {
-            auto data = reader.load_stats();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else if (command == "pokemon_types") {
-            auto data = reader.load_pokemon_types();
-            for (size_t i = 0; i < data.size(); i++) {
-                std::cout << data[i] << "\n";
-            }
-
-        } else {
-            std::cerr << "Invalid data set: " << command << std::endl;
-            return 1;
-        }
-
-        return 0;
-    }
-
-    Colors::initTerminal();
     srand(time(NULL));
+    (void)argc;
+    (void)argv;
+    
+    Colors::initTerminal();
     Map *m = new Map();
     Chunk* current = m->getChunk();
     Character *pc = new Character('@', CharacterType::TrainerLogic, Type::Trainer);
+    chooseStarter(pc);
     Move playerMove = current->placePlayer(pc, current->getIntersectionRow(), current->getIntersectionCol());
     uint32_t running, invalid;
     int32_t key;
@@ -98,22 +104,6 @@ int main(int argc, char *argv[]){
                     case 'y': {
                         playerMove.dx = -1;
                         playerMove.dy = -1;
-                        if (pc->getHPos() + playerMove.dx == current->getNGate() && pc->getVPos() + playerMove.dy == 0){
-                            current->removePlayer();
-                            m->moveNorth();
-                            current = m->getChunk();
-                            playerMove = current->placePlayer(pc, 19, current->getSGate());
-                            current->displayChunk();
-                            break;
-                        }
-                        if (pc->getHPos() + playerMove.dx == 0 && pc->getVPos() + playerMove.dy == current->getWGate()){
-                            current->removePlayer();
-                            m->moveWest();
-                            current = m->getChunk();
-                            playerMove = current->placePlayer(pc, current->getEGate(), 79);
-                            current->displayChunk();
-                            break;
-                        }
                         if (current->movePlayer(playerMove)){ invalid =0;}
                         break;
                         }
@@ -134,22 +124,6 @@ int main(int argc, char *argv[]){
                     case 'u': {
                         playerMove.dx = +1;
                         playerMove.dy = -1;
-                        if (pc->getHPos() + playerMove.dx == current->getNGate() && pc->getVPos() + playerMove.dy == 0){
-                            current->removePlayer();
-                            m->moveNorth();
-                            current = m->getChunk();
-                            playerMove = current->placePlayer(pc, 19, current->getSGate());
-                            current->displayChunk();
-                            break;
-                        }
-                        if (pc->getHPos() + playerMove.dx == 79 && pc->getVPos() + playerMove.dy == current->getEGate()){
-                            current->removePlayer();
-                            m->moveEast();
-                            current = m->getChunk();
-                            playerMove = current->placePlayer(pc, current->getWGate(), 1);
-                            current->displayChunk();
-                            break;
-                        }
                         if (current->movePlayer(playerMove)){ invalid =0;}
                         break;
                         }
@@ -170,22 +144,6 @@ int main(int argc, char *argv[]){
                     case 'n': {
                         playerMove.dx = +1;
                         playerMove.dy = +1;
-                        if (pc->getHPos() + playerMove.dx == current->getSGate() && pc->getVPos() + playerMove.dy == 20){
-                            current->removePlayer();
-                            m->moveSouth();
-                            current = m->getChunk();
-                            playerMove = current->placePlayer(pc, 1, current->getNGate());
-                            current->displayChunk();
-                            break;
-                        }
-                        if (pc->getHPos() + playerMove.dx == 79 && pc->getVPos() + playerMove.dy == current->getEGate()){
-                            current->removePlayer();
-                            m->moveEast();
-                            current = m->getChunk();
-                            playerMove = current->placePlayer(pc, current->getWGate(), 1);
-                            current->displayChunk();
-                            break;
-                        }
                         if (current->movePlayer(playerMove)){ invalid =0;}
                         break;
                         }
@@ -206,22 +164,6 @@ int main(int argc, char *argv[]){
                     case 'b': {
                         playerMove.dx = -1;
                         playerMove.dy = +1;
-                        if (pc->getHPos() + playerMove.dx == current->getSGate() && pc->getVPos() + playerMove.dy == 20){
-                            current->removePlayer();
-                            m->moveSouth();
-                            current = m->getChunk();
-                            playerMove = current->placePlayer(pc, 1, current->getNGate());
-                            current->displayChunk();
-                            break;
-                        }
-                        if (pc->getHPos() + playerMove.dx == 0 && pc->getVPos() + playerMove.dy == current->getWGate()){
-                            current->removePlayer();
-                            m->moveWest();
-                            current = m->getChunk();
-                            playerMove = current->placePlayer(pc, current->getEGate(), 79);
-                            current->displayChunk();
-                            break;
-                        }
                         if (current->movePlayer(playerMove)){ invalid =0;}
                         break;
                         }

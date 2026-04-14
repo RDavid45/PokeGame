@@ -30,6 +30,25 @@ public:
         : data(new T[4]), size_(0), capacity_(4)
     {
     }
+    ArrayList(const ArrayList& other)
+    : data(new T[other.capacity_]),
+      size_(other.size_),
+      capacity_(other.capacity_) {
+    for (size_t i = 0; i < size_; ++i)
+        data[i] = other.data[i];
+    }
+
+    ArrayList& operator=(const ArrayList& other) {
+        if (this == &other) return *this;
+        delete[] data;
+        capacity_ = other.capacity_;
+        size_ = other.size_;
+        data = new T[capacity_];
+        for (size_t i = 0; i < size_; ++i)
+            data[i] = other.data[i];
+        return *this;
+    }
+
 
     ~ArrayList()
     {
@@ -106,6 +125,12 @@ public:
     size_t size() const
     {
         return size_;
+    }
+
+    void clear() {
+        while (size_ > 0){
+            pop();
+        }
     }
 };
 

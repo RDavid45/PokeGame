@@ -84,3 +84,9 @@ Assignment 1.07 - Pokemon parsing
 if you use one of the flags { pokemon, moves, pokemon_moves, pokemon_species, experience, type_names, 
 pokemon_stats, stats, pokemon_types} it will parse that csvs and fill structs that will then be printed to the terminal.
 if ran with no flags it will run the game as normal.
+--------------------------
+Assignment 1.08 - Pokemon Generation
+--------------------------
+uses a singleton to generate pokemon and the pokemon on generated only once a character fights and npc. they also have 
+10% change to be encountered in the wild. press q to exit the battle or wild encounted. the pokemon selected are random pokemon
+of all gens.

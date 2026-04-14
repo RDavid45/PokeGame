@@ -2,12 +2,13 @@
 #include <cassert>
 #include <cstdlib>
 #include <ncurses.h>
+#include "PokemonFactory.h"
 
 /*----------------------------------------------------------*/
 MoveController::MoveController(Board& b,
                                MovementCosts& mc,
-                               CharacterMap& cmap)
-    : b(b), costs(mc), cmap(cmap)
+                               CharacterMap& cmap, int dist)
+    : b(b), costs(mc), cmap(cmap), dist(dist)
 {
     heap = new Heap<Move>();
 }
@@ -56,11 +57,157 @@ int MoveController::findNextDirection(int r, int c) const
 }
 
 /*----------------------------------------------------------*/
-static void handleBattle(Character* npc)
+static void handleEncounter(Character *pc, int dist)
 {
+  (void)pc; // unused for now, but needed for future battling
+
+  PokemonFactory *factory = PokemonFactory::getInstance();
+
+  int minLevel, maxLevel;
+
+  if (dist <= 200) {
+    minLevel = 1;
+    maxLevel = dist / 2;
+  } else {
+    minLevel = (dist - 200) / 2;
+    maxLevel = 100;
+  }
+
+  if (maxLevel < minLevel) {
+    maxLevel = minLevel;
+  }
+
+  int level = minLevel + rand() % (maxLevel - minLevel + 1);
+  Mon *m = factory->generatePokemon(level);
+
+  keypad(stdscr, TRUE);
+
+  bool inBattle = true;
+  while (inBattle) {
+    clear();
+
+    int row = 0;
+
+    mvprintw(row++, 0, "----------------------------------------");
+    mvprintw(row++, 0, "A wild %s appeared!", m->get_name().c_str());
+    mvprintw(row++, 0, "Level %d  Gender: %c%s",
+             m->get_level(),
+             m->get_gender(),
+             m->get_shiny() ? "  *SHINY*" : "");
+    mvprintw(row++, 0, "----------------------------------------");
+
+    row++; // blank line
+
+    mvprintw(row++, 0, "Stats:");
+    mvprintw(row++, 2, "HP : %d", m->get_hp());
+    mvprintw(row++, 2, "Atk: %d   Def: %d", m->get_atk(), m->get_def());
+    mvprintw(row++, 2, "SpA: %d   SpD: %d", m->get_satk(), m->get_sdef());
+    mvprintw(row++, 2, "Spe: %d", m->get_spd());
+
+    row++; // blank line
+
+    mvprintw(row++, 0, "Moves:");
+    for (int i = 0; i < (int) m->get_moves().size(); i++) {
+      mvprintw(row++, 2, "- %s", m->get_moves().get(i).name.c_str());
+    }
+
+    row++;
+    mvprintw(row, 0, "Press 'q' to run away");
+
+    refresh();
+
+    int ch = getch();
+    if (ch == 'q') {
+      inBattle = false;
+    }
+  }
+
+  delete m;
+  clear();
+}
+
+/*----------------------------------------------------------*/
+static void handleBattle(Character*pc, Character* npc, int dist)
+{
+    PokemonFactory* factory = PokemonFactory::getInstance();
+
+    // Only generate Pokémon once
+    if (npc->getPartySize() == 0) {
+
+        int n = 0;
+        while (n < 6) {
+            // Trainer always gets first Pokémon
+            if (n == 0) {
+                n = pc->getPartySize();
+                continue;
+            }
+
+            // 60% chance to get (n+1)th Pokémon
+            if (rand() % 100 < 60) {
+                n++;
+            } else {
+                break;
+            }
+        }
+
+        for (int i = 0; i < n; ++i) {
+            int minLevel, maxLevel;
+
+            if (dist <= 200) {
+                minLevel = 1;
+                maxLevel = dist / 2;
+            } else {
+                minLevel = (dist - 200) / 2;
+                maxLevel = 100;
+            }
+
+            if (maxLevel < minLevel) {
+                maxLevel = minLevel;
+            }
+
+            int level = minLevel + rand() % (maxLevel - minLevel + 1);
+            npc->addMon(factory->generatePokemon(level));
+        }
+    }
+
+    clear();
+    keypad(stdscr, TRUE);
+
+    bool inBattle = true;
+    while (inBattle) {
+        clear();
+
+        mvprintw(0, 0, "A Trainer challenges you!");
+        mvprintw(1, 0, "NPC Party:");
+
+        for (int i = 0; i < npc->getPartySize(); ++i) {
+            Mon* mon = npc->getMon(i);
+            mvprintw(3 + i, 2, "%d. %s (Lv. %d)",
+                     i + 1,
+                     mon->get_name().c_str(),
+                     mon->get_level());
+        }
+
+        mvprintw(20, 0, "Press 'q' to end battle and defeat trainer.");
+        refresh();
+
+        int ch = getch();
+        switch (ch) {
+            case 'q':
+                inBattle = false;
+                break;
+            default:
+                break;
+        }
+    }
+
+    clear();
     mvprintw(22, 0, "Trainer Defeated at (%d, %d)",
              npc->getHPos(), npc->getVPos());
+    refresh();
+
     npc->defeat();
+    clear();
 }
 
 /*----------------------------------------------------------*/
@@ -268,11 +415,11 @@ int MoveController::handleMove(Move& m)
     }
 
     if (cmap.at(nr, nc) && cmap.at(nr, nc) != ch) {
-        if (cmap.at(nr, nc)->getNPCType() == CharacterType::TrainerLogic)
-            handleBattle(ch);
+        if (cmap.at(nr, nc)->getNPCType() == CharacterType::TrainerLogic && !ch->isDefeated())
+            handleBattle(cmap.at(nr, nc), ch, dist);
 
-        else if (ch->getNPCType() == CharacterType::TrainerLogic)
-            handleBattle(cmap.at(nr, nc));
+        else if (ch->getNPCType() == CharacterType::TrainerLogic && !cmap.at(nr, nc)->isDefeated())
+            handleBattle(ch, cmap.at(nr, nc), dist);
 
         if (ch->getNPCType() != CharacterType::TrainerLogic)
             scheduleNextMove(m);
@@ -281,6 +428,9 @@ int MoveController::handleMove(Move& m)
 
     cmap.placeCharacter(nullptr, ch->getVPos(), ch->getHPos());
     cmap.placeCharacter(ch, nr, nc);
+    if(ch->getNPCType() == CharacterType::TrainerLogic && b.getTerrainAT(nr, nc) == ':' && rand() %100 < 10){
+        handleEncounter(ch, dist);
+    }
 
     assert(cmap.at(ch->getVPos(), ch->getHPos()) == ch);
 

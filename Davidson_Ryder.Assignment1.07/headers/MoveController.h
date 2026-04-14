@@ -13,7 +13,7 @@ class MoveController
 public:
     MoveController(Board& b,
                    MovementCosts& mc,
-                   CharacterMap& cmap);
+                   CharacterMap& cmap, int dist);
 
     ~MoveController();
 
@@ -26,6 +26,7 @@ private:
     MovementCosts& costs;
     CharacterMap& cmap;
     Heap<Move>* heap;
+    int dist;
 
     static inline bool inBounds(int r, int c);
     int scheduleNextMove(Move& m);
