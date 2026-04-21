@@ -49,3 +49,9 @@ Assignment 1.08
 ----------------------------------------------------------------------------------------------
 4/14 6:35pm added pokemon generation and placing them inside npcs as well as changed the battle mecanics slightly.
 also better tracking of which npcs have been defeated.
+----------------------------------------------------------------------------------------------
+Assignment 1.09
+----------------------------------------------------------------------------------------------
+4/19 2:27 pm added the attaking logic for using moves.
+4/20 5:04pm Added battle UI, you can now use items in and out of battle, heal your mons at a pokecenter, replenish your items at a pokemart. you can catch new pokemon etc.
+4/20 9:14pm minor bug fixes and changed controls.

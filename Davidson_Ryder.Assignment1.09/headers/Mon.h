@@ -5,6 +5,8 @@
 #include "Pokemon.h"
 #include "ArrayList.h"
 
+
+
 class Mon {
 private:
     int species_id;
@@ -18,10 +20,12 @@ private:
     // Final stats
     int hp, atk, def, satk, sdef, spd;
 
+    int currentHp;
+
     bool shiny;
     char gender;
 
-    int types[2];
+    Pokemon::Type types[2];
 
     ArrayList<Pokemon::move> moves;
 
@@ -41,12 +45,14 @@ public:
     int get_level() const;
     void set_level(int);
 
-    int* get_type() const;
-    void set_type(int, int);
+    Pokemon::Type get_type(int) const;
+    void set_type(Pokemon::Type, Pokemon::Type);
 
     // stats
     int get_hp() const;
     void set_hp(int);
+
+    int get_currentHp() const;
 
     int get_atk() const;
     void set_atk(int);
@@ -76,6 +82,9 @@ public:
     // moves
     void add_move(const Pokemon::move&);
     ArrayList<Pokemon::move>& get_moves();
+
+    void use_move(Mon * target, int move);
+    void heal(int amount);
 
     
 

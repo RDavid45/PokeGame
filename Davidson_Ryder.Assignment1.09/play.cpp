@@ -17,7 +17,7 @@ void chooseStarter(Character *pc) {
   // Generate three level-1 Pokémon
   Mon *starters[3];
   for (int i = 0; i < 3; i++) {
-    starters[i] = factory->generatePokemon(1);
+    starters[i] = factory->generatePokemon(50);
   }
 
   clear();
@@ -60,7 +60,7 @@ void chooseStarter(Character *pc) {
   }
 
   int picked = choice - '1';
-
+  starters[picked]->heal(1000);
   // Give chosen Pokémon to the PC
   pc->addMon(starters[picked]);
 
@@ -79,6 +79,9 @@ void chooseStarter(Character *pc) {
   refresh();
   getch();
 }
+
+
+void handleBag(Character *pc);
 
 
 int main(int argc, char *argv[]){
@@ -183,6 +186,7 @@ int main(int argc, char *argv[]){
                         }
                     case KEY_RIGHT: {
                         current->handleCenter(*pc);
+                        current->handleMart(*pc);
                         break;
                         }
                     case '.': {
@@ -195,6 +199,11 @@ int main(int argc, char *argv[]){
                         current->handleShowTrainers(*pc);
                         break;
                         }
+                    case 'B': {
+                        handleBag(pc);
+                        current->displayChunk();
+                        break;
+                    }
                     case 'Q': {
                         running = 0;
                         invalid = 0;
@@ -255,10 +264,13 @@ int main(int argc, char *argv[]){
                     default: {
                         mvprintw(0, 0,"invalid input               ");
                         break;
-                        }   
+                    }   
                 }
             }
-        }
+        if (pc->isDefeated()){
+            running = false;
+        }    
+    }
         
     if (current) {
         current->removePlayer();
@@ -277,5 +289,95 @@ int main(int argc, char *argv[]){
 
     return 0;
 
+}
+
+void handleBag(Character *pc)
+{
+    bool running = true;
+
+    while (running) {
+        std::array<int, 3> bag = pc->getBag();
+        clear();
+
+        // ---- Title ----
+        mvprintw(0, 0, "Bag");
+        mvprintw(1, 0, "--------------------------------");
+
+        // ---- Left side: Pokémon list ----
+        mvprintw(3, 0, "Pokemon:");
+        for (int i = 0; i < pc->getPartySize(); i++) {
+            Mon *m = pc->getMon(i);
+            mvprintw(5 + i, 2, "%d) %s  HP: %d/%d",
+                     i + 1,
+                     m->get_name().c_str(),
+                     m->get_currentHp(),
+                     m->get_hp());
+        }
+
+        // ---- Right side: items ----
+        int col = 40;
+        mvprintw(3, col, "Items:");
+        mvprintw(5, col, "1) Potion  x%d", bag[0]);
+        mvprintw(6, col, "2) Revive  x%d", bag[1]);
+        mvprintw(7, col, "3) Pokeball  x%d", bag[2]);
+
+        mvprintw(10, 0, "Press 1 (Potion), 2 (Revive), or TAB to exit");
+
+        refresh();
+
+        int choice = getch();
+        if (choice == '\t') {
+            running = false;
+            break;
+        }
+
+        // Determine item type
+        enum ItemType { POTION, REVIVE };
+        ItemType item;
+
+        if (choice == '1') {
+            item = POTION;
+            if (bag[0] <= 0) {
+                mvprintw(12, 0, "You have no potions!");
+                getch();
+                continue;
+            }
+        } else if (choice == '2') {
+            item = REVIVE;
+            if (bag[1] <= 0) {
+                mvprintw(12, 0, "You have no revives!");
+                getch();
+                continue;
+            }
+        } else {
+            continue;
+        }
+
+        // ---- Select Pokémon ----
+        mvprintw(12, 0, "Select Pokemon (1-%d)", pc->getPartySize());
+        refresh();
+
+        int p = getch() - '1';
+        if (p < 0 || p >= pc->getPartySize()) {
+            continue;
+        }
+
+        Mon *target = pc->getMon(p);
+        bool success = false;
+
+        if (item == POTION) {
+            success = pc->usePotion(target);
+        } else {
+            success = pc->useRevive(target);
+        }
+
+        if (!success) {
+            mvprintw(14, 0,
+                     "You can't use this on that Pokemon right now.");
+            getch();
+        }
+    }
+
+    clear();
 }
 

@@ -49,5 +49,6 @@ class Chunk{
 
     void displayChunk()const;
     void handleShowTrainers(const Character& pc)const;
-    void handleCenter(const Character& pc)const;
+    void handleCenter(Character& pc);
+    void handleMart(Character& pc);
 };

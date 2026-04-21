@@ -28,6 +28,9 @@ private:
     static constexpr int MAX_MONS = 6;
     std::array<Mon*, MAX_MONS> party{};
     int partySize = 0;
+    int pokeballs;
+    int revives;
+    int potions;
 
 public:
     Character(char icon, CharacterType npcType, Type movementType);
@@ -49,6 +52,13 @@ public:
     Mon* getMon(int index) const;
     Mon* removeMon(int index);
     int getPartySize() const;
+
+    // bag
+    std::array<int, 3> getBag();
+    void replenishResouces();
+    bool throwBall(Mon * target);
+    bool usePotion(Mon * target);
+    bool useRevive(Mon * target);
 };
 
 #endif // CHARACTER_H

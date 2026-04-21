@@ -19,11 +19,12 @@ controls:
         f (x y) -> fly to the target chunk.
         t -> bring up trainers screen
         ESC -> leave trainers screen
+        TAB -> exit menus
         Q -> quit the game
         UP -> scroll up on trainers screen
-        DOWN -> scroll down on trainers screen
+        DOWN -> scroll down on trainers screen, interact with buildings when in it.
         LEFT -> leave the pokemon center
-        RIGHT -> enter the pokemon center (must be on a pokemon center 'c')
+        RIGHT -> enter building
 ---------------------------
 Known issues - NPCs can get stuck on eachother if they are trying to move into eachother, this is because they are set to move until
 they hit impassible terrain, and other NPCs are not considered impassable. 
@@ -90,3 +91,10 @@ Assignment 1.08 - Pokemon Generation
 uses a singleton to generate pokemon and the pokemon on generated only once a character fights and npc. they also have 
 10% change to be encountered in the wild. press q to exit the battle or wild encounted. the pokemon selected are random pokemon
 of all gens.
+--------------------------
+Assignment 1.09 - Pokemon battles
+--------------------------
+When you enter a battle it brings you to the battle screen where you can perform 1 of several actions: fight, bag, pkmn, or run
+each battle is its own battle object and is between 2 Characters or a character and a Mon. Starters are set to be level 5 and each
+trainer can have up to 6 pokemon. Damage is calulated with a divide between physical and special, as well as types. Crits are set
+to a flat ~4%

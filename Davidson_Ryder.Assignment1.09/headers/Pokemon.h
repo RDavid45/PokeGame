@@ -3,6 +3,30 @@
 #include <string>
 
 namespace Pokemon {
+
+    enum Type {
+        No_TYPE = 0,
+        NORMAL = 1,
+        FIGHTING,
+        FLYING,
+        POISON,
+        GROUND,
+        ROCK,
+        BUG,
+        GHOST,
+        STEEL,
+        FIRE,
+        WATER,
+        GRASS,
+        ELECTRIC,
+        PSYCHIC,
+        ICE,
+        DRAGON,
+        DARK,
+        FAIRY
+    };
+
+
     struct pokemon {
         int id;
         std::string name;

@@ -33,17 +33,26 @@ Mon* PokemonFactory::generatePokemon(int level) {
     int species_id = p.species_id;
 
     // Determine Pokémon types
-    int type1 = -1;
-    int type2 = -1;
+    Pokemon::Type type1 = Pokemon::No_TYPE;
+    Pokemon::Type type2 = Pokemon::No_TYPE;
 
-    for (int j = 0; j < (int) type_mappings.size(); j++) {
+    for (int j = 0; j < (int)type_mappings.size(); j++) {
         auto tm = type_mappings.get(j);
         if (tm.pokemon_id != species_id) continue;
 
+        
+        auto is_valid_type = [](int id) {
+            return id >= Pokemon::NORMAL && id <= Pokemon::FAIRY;
+        };
+
+        if (is_valid_type(tm.type_id)) {
+        Pokemon::Type t = static_cast<Pokemon::Type>(tm.type_id);
+
         if (tm.slot == 1) {
-            type1 = tm.type_id;
+            type1 = t;
         } else if (tm.slot == 2) {
-            type2 = tm.type_id;
+            type2 = t;
+        }
         }
     }
 
@@ -129,6 +138,8 @@ Mon* PokemonFactory::generatePokemon(int level) {
     if ((int) possible.size() > 1) {
         mon->add_move(possible.get(rand() % possible.size()));
     }
+
+    mon->heal(1000);
 
     return mon;
 }

@@ -242,18 +242,91 @@ int Chunk::genNPCsIfNeeded() {
     return -1;
 }
 
-void Chunk::handleCenter(const Character& pc)const{
-    if (board.getTerrainAT(pc.getVPos(), pc.getHPos()) != 'c') {return;}
-    clear();
-    mvprintw(0, 0, "%s", "Welcome to the Pokemon Center, press left to leave");
+void Chunk::handleCenter(Character& pc)
+{
+    if (board.getTerrainAT(pc.getVPos(), pc.getHPos()) != 'c') {
+        return;
+    }
+
     int32_t key;
-    while (1){
+
+    while (true) {
+        clear();
+
+        // ---- Title ----
+        mvprintw(0, 0, "Welcome to the Pokemon Center");
+        mvprintw(1, 0, "-----------------------------");
+        mvprintw(2, 0, "Your party:");
+
+        // ---- Party list with HP ----
+        for (int i = 0; i < pc.getPartySize(); i++) {
+            Mon* m = pc.getMon(i);
+            mvprintw(4 + i, 2, "%d) %s  HP: %d/%d",
+                     i + 1,
+                     m->get_name().c_str(),
+                     m->get_currentHp(),
+                     m->get_hp());
+        }
+
+        // ---- Instructions ----
+        mvprintw(12, 0, "Press DOWN to heal your Pokemon");
+        mvprintw(13, 0, "Press LEFT to leave");
+
+        refresh();
+
         key = getch();
-        switch (key)
-        {
+        switch (key) {
+        case KEY_DOWN:
+            // Heal entire party
+            for (int i = 0; i < pc.getPartySize(); i++) {
+                pc.getMon(i)->heal(1000);
+            }
+            break;
+
         case KEY_LEFT:
             displayChunk();
             return;
+
+        default:
+            break;
+        }
+    }
+}
+
+void Chunk::handleMart(Character& pc)
+{
+    if (board.getTerrainAT(pc.getVPos(), pc.getHPos()) != 'm') {
+        return;
+    }
+
+    int32_t key;
+
+    while (true) {
+        std::array<int, 3> bag = pc.getBag();
+        clear();
+
+        mvprintw(0, 0, "Welcome to the PokeMart");
+        mvprintw(1, 0, "----------------------");
+        mvprintw(3, 0, "Items:");
+        mvprintw(5, 2, "Potions   : %d", bag[0]);
+        mvprintw(6, 2, "Revives   : %d", bag[1]);
+        mvprintw(7, 2, "Pokeballs : %d", bag[2]);
+
+        mvprintw(10, 0, "Press DOWN to replenish items");
+        mvprintw(11, 0, "Press LEFT to leave");
+
+        refresh();
+
+        key = getch();
+        switch (key) {
+        case KEY_DOWN:
+            pc.replenishResouces();
+            break;
+
+        case KEY_LEFT:
+            displayChunk();
+            return;
+
         default:
             break;
         }
@@ -311,7 +384,7 @@ void Chunk::handleShowTrainers(const Character &pc) const {
 
     auto render = [&] {
         erase();
-        mvprintw(title_row, 0, "Trainers (ESC to exit)");
+        mvprintw(title_row, 0, "Trainers (TAB to exit)");
 
         int to_show = min(visible_rows,
                           numTrainers - startAt);
@@ -337,7 +410,6 @@ void Chunk::handleShowTrainers(const Character &pc) const {
                     render();
                 }
                 break;
-
             case KEY_DOWN:
                 if (startAt + visible_rows < numTrainers) {
                     ++startAt;
@@ -345,6 +417,7 @@ void Chunk::handleShowTrainers(const Character &pc) const {
                 }
                 break;
 
+            case '\t':
             case 27: // ESC
                 active = false;
                 break;

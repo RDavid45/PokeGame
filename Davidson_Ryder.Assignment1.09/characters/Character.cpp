@@ -9,7 +9,10 @@ Character::Character(char icon, CharacterType npcType, Type movementType)
       hPos(0),
       defeated(false),
       party{},
-      partySize(0)
+      partySize(0),
+      pokeballs(10),
+      revives(10),
+      potions(10)
 {
 }
 
@@ -90,3 +93,34 @@ int Character::getPartySize() const {
     return partySize;
 }
 
+std::array<int, 3> Character::getBag(){
+    return {potions, revives, pokeballs};
+}
+
+void Character::replenishResouces(){ revives = 10; potions = 10; pokeballs = 10;}
+bool Character::throwBall(Mon * target){ 
+    pokeballs--; 
+    if (partySize < 6) {
+        addMon(target); 
+        return true;
+    } 
+    return false;
+}
+
+bool Character::usePotion(Mon * target){
+    if (target->get_currentHp() < target->get_hp() && target->get_currentHp() >0){
+        target->heal(20);
+        potions--;
+        return true;
+    }
+    return false;
+}
+
+bool Character::useRevive(Mon * target){
+    if (target->get_currentHp() > 0){
+        return false;
+    }
+    revives--;
+    target->heal(20);
+    return true;
+}

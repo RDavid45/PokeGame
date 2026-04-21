@@ -23,6 +23,7 @@ SRCS_PLAY := \
     pokemon/Pokemon.cpp \
     pokemon/PokemonFactory.cpp \
     pokemon/Mon.cpp \
+    pokemon/Battle.cpp \
     characters/Character.cpp \
     characters/CharacterMap.cpp \
     CSVReader.cpp \

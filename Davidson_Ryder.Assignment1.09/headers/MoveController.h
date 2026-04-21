@@ -13,8 +13,8 @@ class MoveController
 public:
     MoveController(Board& b,
                    MovementCosts& mc,
-                   CharacterMap& cmap, int dist);
-
+                   CharacterMap& cmap,
+                   int dist);
     ~MoveController();
 
     int scheduleMove(const Move& m);
@@ -22,15 +22,19 @@ public:
     Move getNextMove();
 
 private:
+    // ================= Core State =================
     Board& b;
     MovementCosts& costs;
     CharacterMap& cmap;
     Heap<Move>* heap;
     int dist;
 
+    // ================= Movement Helpers =================
     static inline bool inBounds(int r, int c);
     int scheduleNextMove(Move& m);
     int findNextDirection(int r, int c) const;
+
+    Mon* getRandomMon();
 };
 
 #endif
